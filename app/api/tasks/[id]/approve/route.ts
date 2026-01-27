@@ -3,10 +3,11 @@ import { sql } from '@/lib/db';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const taskId = parseInt(params.id);
+    const { id } = await params;
+    const taskId = parseInt(id);
     const { approved } = await request.json();
 
     const taskResult = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
@@ -56,7 +57,7 @@ export async function POST(
       task: updated[0],
     });
   } catch (error) {
-    console.error('[v0] Failed to approve task:', error);
+    console.error('Failed to approve task:', error);
     return NextResponse.json(
       { error: '任务审批失败' },
       { status: 500 }

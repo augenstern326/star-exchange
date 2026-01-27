@@ -7,22 +7,22 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const productId = parseInt(id);
+    const taskId = parseInt(id);
     
-    const result = await sql`SELECT * FROM products WHERE id = ${productId}`;
+    const result = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
     
     if (result.length === 0) {
       return NextResponse.json(
-        { error: '商品不存在' },
+        { error: '任务不存在' },
         { status: 404 }
       );
     }
 
     return NextResponse.json(result[0]);
   } catch (error) {
-    console.error('Failed to fetch product:', error);
+    console.error('Failed to fetch task:', error);
     return NextResponse.json(
-      { error: '获取商品失败' },
+      { error: '获取任务失败' },
       { status: 500 }
     );
   }
@@ -34,19 +34,20 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const productId = parseInt(id);
+    const taskId = parseInt(id);
     const data = await request.json();
 
-    const product = await sql`SELECT * FROM products WHERE id = ${productId}`;
-    if (product.length === 0) {
+    const task = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
+    if (task.length === 0) {
       return NextResponse.json(
-        { error: '商品不存在' },
+        { error: '任务不存在' },
         { status: 404 }
       );
     }
 
-    const allowedFields = ['name', 'description', 'image_url', 'price_stars', 'stock_quantity', 'category', 'is_active', 'sort_order'];
+    const allowedFields = ['title', 'description', 'image_url', 'reward_stars', 'task_type', 'status', 'requires_approval', 'deadline_at', 'notes', 'child_id', 'completed_at'];
     const updates: string[] = [];
+    const values: unknown[] = [];
 
     for (const [key, value] of Object.entries(data)) {
       if (allowedFields.includes(key) && value !== undefined) {
@@ -63,25 +64,25 @@ export async function PATCH(
     }
 
     if (updates.length === 0) {
-      return NextResponse.json(product[0]);
+      return NextResponse.json(task[0]);
     }
 
     const updateStr = updates.join(', ');
     const updated = await sql`
-      UPDATE products 
+      UPDATE tasks 
       SET ${sql.raw(updateStr)}, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${productId}
+      WHERE id = ${taskId}
       RETURNING *
     `;
 
     return NextResponse.json({
       success: true,
-      product: updated[0],
+      task: updated[0],
     });
   } catch (error) {
-    console.error('Failed to update product:', error);
+    console.error('Failed to update task:', error);
     return NextResponse.json(
-      { error: '更新商品失败' },
+      { error: '更新任务失败' },
       { status: 500 }
     );
   }
@@ -93,26 +94,26 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const productId = parseInt(id);
+    const taskId = parseInt(id);
     
-    const product = await sql`SELECT * FROM products WHERE id = ${productId}`;
-    if (product.length === 0) {
+    const task = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
+    if (task.length === 0) {
       return NextResponse.json(
-        { error: '商品不存在' },
+        { error: '任务不存在' },
         { status: 404 }
       );
     }
 
-    await sql`DELETE FROM products WHERE id = ${productId}`;
+    await sql`DELETE FROM tasks WHERE id = ${taskId}`;
     
     return NextResponse.json({
       success: true,
-      message: '商品已删除',
+      message: '任务已删除',
     });
   } catch (error) {
-    console.error('Failed to delete product:', error);
+    console.error('Failed to delete task:', error);
     return NextResponse.json(
-      { error: '删除商品失败' },
+      { error: '删除任务失败' },
       { status: 500 }
     );
   }

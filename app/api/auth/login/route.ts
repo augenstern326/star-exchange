@@ -15,8 +15,13 @@ export async function POST(request: NextRequest) {
 
     // Query user from database
     const users = await sql`
-      SELECT id, username, email, password_hash, user_type, parent_id, nickname, avatar_url, star_balance
-      FROM users
+      SELECT id, username, email, password_hash, user_type, parent_id, nickname, avatar_url, star_balance,
+             CASE
+               WHEN user_type = 'parent' THEN true
+               ELSE false
+               END AS is_parent,
+          (select nickname from users where parent_id = aa.id) as childName
+      FROM users aa
       WHERE username = ${username} AND user_type = ${userType}
       LIMIT 1
     `;
@@ -52,6 +57,8 @@ export async function POST(request: NextRequest) {
         avatarUrl: userWithoutPassword.avatar_url,
         totalStars: userWithoutPassword.star_balance,
         createdAt: new Date(),
+        isParent:userWithoutPassword.is_parent,
+        childName:userWithoutPassword.childName
       },
     });
   } catch (error) {

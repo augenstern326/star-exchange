@@ -16,7 +16,6 @@ export default function ParentLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -41,9 +40,11 @@ export default function ParentLogin() {
       }
 
       const data = await response.json();
+
       localStorage.setItem('currentUser', JSON.stringify(data.user));
       toast.success('登录成功！');
       router.push('/parent/dashboard');
+
     } catch (error) {
       console.error('[v0] Login error:', error);
       toast.error('登录失败，请稍后重试');
@@ -107,30 +108,7 @@ export default function ParentLogin() {
               {loading ? '登录中...' : '登录'}
             </Button>
           </form>
-
-          <div className="mt-6 pt-6 border-t border-border">
-            <p className="text-center text-sm text-muted-foreground mb-4">
-              还没有账号？
-            </p>
-            <Link href="/parent/register">
-              <Button variant="outline" className="w-full bg-transparent">
-                注册账号
-              </Button>
-            </Link>
-          </div>
         </Card>
-
-        {/* Demo Credentials */}
-        <Card className="p-4 bg-accent/20 text-center">
-          <p className="text-sm text-foreground font-semibold mb-2">
-            演示账号
-          </p>
-          <p className="text-xs text-muted-foreground">
-            用户名: parent1<br />
-            密码: password123
-          </p>
-        </Card>
-
         {/* Back Link */}
         <div className="mt-6 text-center">
           <Link href="/">

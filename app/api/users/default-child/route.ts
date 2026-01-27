@@ -11,7 +11,7 @@ export async function GET() {
       ORDER BY created_at ASC
       LIMIT 1
     `;
-
+    console.log(result);
     if (result.length === 0) {
       return NextResponse.json(
         { error: '没有找到小孩用户，请先在数据库中创建小孩用户' },

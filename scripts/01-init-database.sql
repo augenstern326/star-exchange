@@ -117,12 +117,12 @@ CREATE INDEX IF NOT EXISTS idx_transactions_type ON star_transactions(transactio
 -- IMPORTANT: You must now create users manually using SQL INSERT statements.
 -- 
 -- Example 1: Create a parent user
--- INSERT INTO users (username, email, password_hash, user_type, nickname, star_balance)
--- VALUES ('parent1', 'parent@example.com', '$2b$10$...hashed_password...', 'parent', '爸爸', 0);
+INSERT INTO users (username, email, password_hash, user_type, nickname, star_balance)
+VALUES ('htt', 'htt@example.com', '3ae3806906f0ed98a6fb7e84a00e89785fa3049457394d2b48a5e62a883c50b06af8f799f1ae154f57b6f6f21534977299488c1c3c3e27b5e7c19f4a3d4ad5ba', 'parent', '胡婷婷', 0);
 --
 -- Example 2: Create a child user (replace parent_user_id with actual parent ID)
--- INSERT INTO users (username, email, password_hash, user_type, parent_id, nickname, star_balance)
--- VALUES ('child1', 'child@example.com', '$2b$10$...hashed_password...', 'child', 1, '小明', 50);
+INSERT INTO users (username, email, password_hash, user_type, parent_id, nickname, star_balance)
+VALUES ('fyq', 'fyq@example.com', '3ae3806906f0ed98a6fb7e84a00e89785fa3049457394d2b48a5e62a883c50b06af8f799f1ae154f57b6f6f21534977299488c1c3c3e27b5e7c19f4a3d4ad5ba', 'child', 1, '方佑琪', 0);
 --
 -- Password hashing: Use bcrypt to hash passwords before storing them.
 -- The application expects bcrypt-hashed passwords in the password_hash field.

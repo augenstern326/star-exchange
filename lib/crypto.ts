@@ -11,3 +11,4 @@ export function verifyPassword(password: string, hash: string): boolean {
   const passwordHash = hashPassword(password);
   return passwordHash === hash;
 }
+

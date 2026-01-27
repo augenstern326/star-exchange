@@ -33,6 +33,7 @@ export default function Home() {
           star_balance: user.star_balance,
           user_type: 'child',
         });
+        localStorage.setItem('currentUser', JSON.stringify(user));
       } catch (err) {
         console.error('[v0] Failed to load child user:', err);
         setError(err instanceof Error ? err.message : '加载失败');
@@ -40,7 +41,6 @@ export default function Home() {
         setLoading(false);
       }
     };
-
     loadChildUser();
   }, []);
 
@@ -85,7 +85,7 @@ export default function Home() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/login">
+            <Link href="/parent/login">
               <Button variant="ghost" size="sm">
                 登录
               </Button>

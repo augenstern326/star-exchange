@@ -3,10 +3,10 @@ import { sql } from '@/lib/db';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const productId = parseInt(params.id);
+    const productId = (await params).id;
     const data = await request.json();
 
     const product = await sql`SELECT * FROM products WHERE id = ${productId}`;
@@ -18,18 +18,11 @@ export async function PATCH(
     }
 
     // Build the update query dynamically
-    const updates = Object.entries(data)
-      .filter(([_, value]) => value !== undefined)
-      .map(([key, value]) => `${key} = ${typeof value === 'string' ? `'${value}'` : value}`)
-      .join(', ');
-
-    if (!updates) {
-      return NextResponse.json(product[0]);
-    }
+    let newInventory = data.inventory;
 
     const updated = await sql`
       UPDATE products 
-      SET ${sql.raw(updates)}, updated_at = CURRENT_TIMESTAMP
+      SET inventory = ${newInventory}, updated_at = CURRENT_TIMESTAMP
       WHERE id = ${productId}
       RETURNING *
     `;
@@ -49,11 +42,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const productId = parseInt(params.id);
-    
+
+    const productId = (await params).id;
     const product = await sql`SELECT * FROM products WHERE id = ${productId}`;
     if (product.length === 0) {
       return NextResponse.json(

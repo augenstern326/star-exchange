@@ -28,8 +28,18 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return NextResponse.json(
-    { error: '任务创建已禁用。请使用对应的管理界面创建任务。' },
-    { status: 405 }
-  );
+  try {
+    const { title, description, reward, penalty,requiresApproval, parentId} = await request.json();
+
+    let tasks = await sql`INSERT INTO tasks (parent_id, child_id, title, description, reward,requires_approval)
+                          VALUES (${parseInt(parentId)}, 2, ${title}, ${description}, ${reward}, ${requiresApproval});`;
+
+    return NextResponse.json(tasks);
+  } catch (error) {
+    console.error('[v0] Failed to create tasks:', error);
+    return NextResponse.json(
+        { error: '获取任务失败' },
+        { status: 500 }
+    );
+  }
 }

@@ -30,7 +30,13 @@ export default function ParentDashboard() {
       router.push('/');
       return;
     }
-    setCurrentUser(user);
+    setCurrentUser({
+      id: user.id.toString(),
+      name: user.nickname ,
+      isParent: user.isParent,
+      childName: user.childName,
+    });
+    console.log(currentUser)
     setLoading(false);
   }, [router]);
 
@@ -58,15 +64,23 @@ export default function ParentDashboard() {
             <h1 className="text-2xl font-bold text-foreground">
               {currentUser.name} 的管理中心
             </h1>
-            <p className="text-sm text-muted-foreground">
-              管理 {currentUser.childName} 的星星存折
-            </p>
           </div>
           <Button
             variant="ghost"
-            onClick={() => {
+            onClick={async () => {
               localStorage.removeItem('currentUser');
-              setCurrentUser(null);
+              const response = await fetch('/api/users/default-child');
+              if (!response.ok) {
+                throw new Error('无法加载小孩数据');
+              }
+              const user = await response.json();
+              setCurrentUser({
+                id: user.id.toString(),
+                nickname: user.nickname || '小朋友',
+                star_balance: user.star_balance,
+                user_type: 'child',
+              });
+              localStorage.setItem('currentUser', JSON.stringify(user));
               router.push('/');
             }}
           >
@@ -78,42 +92,28 @@ export default function ParentDashboard() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-primary to-primary/80 text-white p-6 shadow-lg">
-            <p className="text-white/90 mb-2">待处理任务</p>
-            <h2 className="text-4xl font-bold mb-2">0</h2>
-            <p className="text-sm text-white/80">需要审批</p>
-          </Card>
+        {/*<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">*/}
+        {/*  <Card className="bg-gradient-to-br from-primary to-primary/80 text-white p-6 shadow-lg">*/}
+        {/*    <p className="text-white/90 mb-2">待处理任务</p>*/}
+        {/*    <h2 className="text-4xl font-bold mb-2">0</h2>*/}
+        {/*    <p className="text-sm text-white/80">需要审批</p>*/}
+        {/*  </Card>*/}
 
-          <Card className="bg-gradient-to-br from-accent to-accent/80 text-foreground p-6 shadow-lg">
-            <p className="text-muted-foreground mb-2">已发布任务</p>
-            <h2 className="text-4xl font-bold mb-2">0</h2>
-            <p className="text-sm text-muted-foreground">总计</p>
-          </Card>
+        {/*  <Card className="bg-gradient-to-br from-accent to-accent/80 text-foreground p-6 shadow-lg">*/}
+        {/*    <p className="text-muted-foreground mb-2">已发布任务</p>*/}
+        {/*    <h2 className="text-4xl font-bold mb-2">0</h2>*/}
+        {/*    <p className="text-sm text-muted-foreground">总计</p>*/}
+        {/*  </Card>*/}
 
-          <Card className="bg-gradient-to-br from-secondary to-secondary/80 text-foreground p-6 shadow-lg">
-            <p className="text-muted-foreground mb-2">商品库存</p>
-            <h2 className="text-4xl font-bold mb-2">0</h2>
-            <p className="text-sm text-muted-foreground">件</p>
-          </Card>
-        </div>
+        {/*  <Card className="bg-gradient-to-br from-secondary to-secondary/80 text-foreground p-6 shadow-lg">*/}
+        {/*    <p className="text-muted-foreground mb-2">商品库存</p>*/}
+        {/*    <h2 className="text-4xl font-bold mb-2">0</h2>*/}
+        {/*    <p className="text-sm text-muted-foreground">件</p>*/}
+        {/*  </Card>*/}
+        {/*</div>*/}
 
         {/* Navigation Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* 发布任务 */}
-          <Link href="/parent/tasks/create">
-            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
-              <Image
-                src="/task-icon.png"
-                alt="任务"
-                width={64}
-                height={64}
-              />
-              <h3 className="text-xl font-bold text-foreground">发布任务</h3>
-              <p className="text-sm text-muted-foreground">创建新的任务</p>
-            </Card>
-          </Link>
-
           {/* 任务管理 */}
           <Link href="/parent/tasks">
             <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
@@ -122,21 +122,6 @@ export default function ParentDashboard() {
               <p className="text-sm text-muted-foreground">审批和管理任务</p>
             </Card>
           </Link>
-
-          {/* 发布商品 */}
-          <Link href="/parent/products/create">
-            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
-              <Image
-                src="/gift-box.png"
-                alt="商品"
-                width={64}
-                height={64}
-              />
-              <h3 className="text-xl font-bold text-foreground">发布商品</h3>
-              <p className="text-sm text-muted-foreground">上架新的奖励商品</p>
-            </Card>
-          </Link>
-
           {/* 商品管理 */}
           <Link href="/parent/products">
             <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -25,8 +26,20 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return NextResponse.json(
-    { error: '商品创建已禁用。请使用对应的管理界面创建商品。' },
-    { status: 405 }
-  );
+  try {
+    const  {name,description,price,inventory,image,parentId} = await request.json();
+
+
+    let product = await sql`INSERT INTO products (parent_id, name, image, description, price,inventory, is_active)
+                           VALUES (${parseInt(parentId)}, ${name}, ${image},${description},${parseInt(price)}, ${parseInt(inventory)}, true);`;
+
+
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error('[v0] Failed to create products:', error);
+    return NextResponse.json(
+        { error: '创建商品失败' },
+        { status: 500 }
+    );
+  }
 }

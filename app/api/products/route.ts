@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ProductStore, Product } from '@/lib/data-store';
+import { sql } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const parentId = searchParams.get('parentId');
 
-    let products = ProductStore.getAll();
+    let products;
     
     if (parentId) {
-      products = ProductStore.getByParent(parentId);
+      products = await sql`SELECT * FROM products WHERE parent_id = ${parseInt(parentId)} AND is_active = true ORDER BY sort_order, created_at DESC`;
+    } else {
+      products = await sql`SELECT * FROM products WHERE is_active = true ORDER BY sort_order, created_at DESC`;
     }
 
     return NextResponse.json(products);
   } catch (error) {
+    console.error('[v0] Failed to fetch products:', error);
     return NextResponse.json(
       { error: '获取商品失败' },
       { status: 500 }
@@ -22,30 +25,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json();
-    
-    const newProduct: Product = {
-      id: `prod_${Date.now()}`,
-      name: data.name,
-      description: data.description || '',
-      price: data.price,
-      inventory: data.inventory || 0,
-      image: data.image,
-      parentId: data.parentId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const created = ProductStore.create(newProduct);
-    return NextResponse.json(
-      { success: true, product: created },
-      { status: 201 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: '创建商品失败' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { error: '商品创建已禁用。请使用对应的管理界面创建商品。' },
+    { status: 405 }
+  );
 }

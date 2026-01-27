@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserStore, User } from '@/lib/data-store';
+import { sql } from '@/lib/db';
 
 export async function GET() {
   try {
-    const users = UserStore.getAll();
+    const users = await sql`
+      SELECT id, username, email, user_type, parent_id, nickname, avatar_url, star_balance, created_at, updated_at
+      FROM users
+      ORDER BY created_at DESC
+    `;
     return NextResponse.json(users);
   } catch (error) {
+    console.error('[v0] Failed to fetch users:', error);
     return NextResponse.json(
       { error: '获取用户失败' },
       { status: 500 }
@@ -14,31 +19,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json();
-    
-    const newUser: User = {
-      id: `user_${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      isParent: data.isParent || false,
-      totalStars: data.isParent ? 0 : (data.totalStars || 0),
-      childName: data.childName,
-      createdAt: new Date(),
-    };
-
-    const created = UserStore.create(newUser);
-    const { password: _, ...userWithoutPassword } = created;
-    
-    return NextResponse.json(
-      { success: true, user: userWithoutPassword },
-      { status: 201 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: '创建用户失败' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { error: '用户创建已禁用。请使用 SQL 脚本直接在数据库中创建用户。' },
+    { status: 405 }
+  );
 }

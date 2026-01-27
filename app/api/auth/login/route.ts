@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql, initializeDatabase } from '@/lib/db';
+import { sql } from '@/lib/db';
 import { verifyPassword } from '@/lib/crypto';
 
 export async function POST(request: NextRequest) {
   try {
-    // Initialize database on first request
-    await initializeDatabase();
-
     const { username, password, userType } = await request.json();
 
     if (!username || !password) {

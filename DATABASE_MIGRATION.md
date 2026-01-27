@@ -79,7 +79,7 @@
 
 ### 认证流程
 
-```
+\`\`\`
 用户输入 (username + password + userType)
         ↓
 POST /api/auth/login
@@ -93,11 +93,11 @@ POST /api/auth/login
 存储到 localStorage
         ↓
 重定向到相应页面
-```
+\`\`\`
 
 ### 数据库初始化流程
 
-```
+\`\`\`
 应用启动
     ↓
 RootLayout 挂载
@@ -115,7 +115,7 @@ RootLayout 挂载
 如果没有，创建演示用户
     ↓
 初始化完成
-```
+\`\`\`
 
 ### 密码加密
 
@@ -128,7 +128,7 @@ RootLayout 挂载
 ## 数据库表结构
 
 ### users 表
-```
+\`\`\`
 id (BIGSERIAL) - 主键，自增
 username (VARCHAR 50) - 唯一用户名，索引
 email (VARCHAR 100)
@@ -143,7 +143,7 @@ total_spent (INT) - 总消费星星
 is_active (BOOLEAN)
 created_at (TIMESTAMP)
 updated_at (TIMESTAMP)
-```
+\`\`\`
 
 ### tasks, products, exchanges, star_transactions 表
 参考 `/NEON_SETUP.md` 中的完整表结构说明。
@@ -165,9 +165,9 @@ updated_at (TIMESTAMP)
 
 需要设置以下环境变量：
 
-```
+\`\`\`
 DATABASE_URL=postgresql://user:password@host:port/database
-```
+\`\`\`
 
 ### 获取方式
 
@@ -179,7 +179,7 @@ DATABASE_URL=postgresql://user:password@host:port/database
 
 ### 本地开发
 
-```bash
+\`\`\`bash
 # 1. 设置环境变量
 echo "DATABASE_URL=your_neon_connection_string" > .env.local
 
@@ -191,7 +191,7 @@ npm run dev
 
 # 4. 访问应用
 # http://localhost:3000
-```
+\`\`\`
 
 应用会自动初始化数据库（如果还没有）。
 

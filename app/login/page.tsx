@@ -19,12 +19,7 @@ export default function ChildLogin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Pre-fill with first child user for demo
-  const handleLoginFirstChild = async () => {
-    setUsername('child1');
-    setPassword('child123');
-    setUserType('child');
-  };
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,26 +175,7 @@ export default function ChildLogin() {
           </Tabs>
         </Card>
 
-        {/* Demo Info */}
-        <div className="mt-6 p-4 bg-accent/20 rounded-lg text-center">
-          <p className="text-sm text-foreground font-semibold mb-3">
-            💡 演示账号
-          </p>
-          <p className="text-xs text-foreground mb-2">
-            小孩: username: <code>child1</code> | password: <code>child123</code>
-          </p>
-          <p className="text-xs text-foreground mb-3">
-            家长: username: <code>parent1</code> | password: <code>password123</code>
-          </p>
-          <Button
-            size="sm"
-            variant="outline"
-            className="w-full bg-transparent"
-            onClick={handleLoginFirstChild}
-          >
-            快速登录 (小孩账号)
-          </Button>
-        </div>
+
       </div>
     </div>
   );

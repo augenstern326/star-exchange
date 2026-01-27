@@ -22,27 +22,27 @@
 ### 本地开发 (5 分钟)
 
 1. **克隆项目**
-   ```bash
+   \`\`\`bash
    git clone <your-repo>
    cd <project-name>
-   ```
+   \`\`\`
 
 2. **安装依赖**
-   ```bash
+   \`\`\`bash
    npm install
-   ```
+   \`\`\`
 
 3. **配置数据库**
    
    创建 `.env.local` 文件：
-   ```
+   \`\`\`
    DATABASE_URL=postgresql://your_user:your_password@your_host/your_database
-   ```
+   \`\`\`
 
 4. **启动开发服务器**
-   ```bash
+   \`\`\`bash
    npm run dev
-   ```
+   \`\`\`
 
 5. **打开浏览器**
    
@@ -77,7 +77,7 @@
 
 ## 🏗️ 项目结构
 
-```
+\`\`\`
 project/
 ├── app/
 │   ├── layout.tsx                    # 根布局
@@ -106,7 +106,7 @@ project/
 ├── scripts/
 │   └── manual-init.md                # 手动初始化指南
 └── public/                           # 静态资源
-```
+\`\`\`
 
 ## 🔧 技术栈
 
@@ -161,11 +161,11 @@ project/
 ### 部署到 Vercel (推荐)
 
 1. **推送代码到 GitHub**
-   ```bash
+   \`\`\`bash
    git add .
    git commit -m "Initial commit"
    git push origin main
-   ```
+   \`\`\`
 
 2. **在 Vercel 中导入项目**
    - 访问 https://vercel.com/new
@@ -280,7 +280,7 @@ MIT License - 详见 [LICENSE](./LICENSE)
 
 ## 📊 项目统计
 
-```
+\`\`\`
 语言: TypeScript
 框架: Next.js 16
 数据库: PostgreSQL (Neon)
@@ -288,7 +288,7 @@ UI库: shadcn/ui
 样式: Tailwind CSS
 行数: ~5000+ (包括文档)
 文件: 100+ (包括组件)
-```
+\`\`\`
 
 ## 🎓 学习资源
 

@@ -8,35 +8,43 @@ import { Button } from '@/components/ui/button';
 
 interface User {
   id: string;
-  name: string;
-  totalStars: number;
-  isParent: boolean;
+  nickname: string;
+  star_balance: number;
+  user_type: 'parent' | 'child';
 }
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Try to get current user from localStorage
-    const userStr = localStorage.getItem('currentUser');
-    if (userStr) {
-      setCurrentUser(JSON.parse(userStr));
-    } else {
-      // Auto-login as child user without requiring input
-      const defaultChild = {
-        id: `child_${Date.now()}`,
-        name: '小朋友',
-        totalStars: 50,
-        isParent: false,
-      };
-      setCurrentUser(defaultChild);
-      localStorage.setItem('currentUser', JSON.stringify(defaultChild));
-    }
-    setLoading(false);
+    const loadChildUser = async () => {
+      try {
+        // Fetch the first (default) child user from database
+        const response = await fetch('/api/users/default-child');
+        if (!response.ok) {
+          throw new Error('无法加载小孩数据');
+        }
+        const user = await response.json();
+        setCurrentUser({
+          id: user.id.toString(),
+          nickname: user.nickname || '小朋友',
+          star_balance: user.star_balance,
+          user_type: 'child',
+        });
+      } catch (err) {
+        console.error('[v0] Failed to load child user:', err);
+        setError(err instanceof Error ? err.message : '加载失败');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChildUser();
   }, []);
 
-  if (loading || !currentUser) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-primary/10 to-secondary/10 flex items-center justify-center">
         <div className="text-center">
@@ -47,8 +55,17 @@ export default function Home() {
     );
   }
 
-  if (currentUser.isParent) {
-    return <div>正在重定向到家长界面...</div>;
+  if (error || !currentUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-primary/10 to-secondary/10 flex items-center justify-center p-4">
+        <Card className="p-8 text-center max-w-md">
+          <p className="text-red-600 font-semibold mb-4">{error || '无法加载数据'}</p>
+          <Link href="/login">
+            <Button className="w-full">返回登录</Button>
+          </Link>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -64,25 +81,15 @@ export default function Home() {
               height={32}
             />
             <h1 className="text-2xl font-bold text-foreground">
-              {currentUser.name}的星星存折
+              {currentUser.nickname}的星星存折
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/parent/login">
+            <Link href="/login">
               <Button variant="ghost" size="sm">
-                家长
+                登录
               </Button>
             </Link>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                localStorage.removeItem('currentUser');
-                setCurrentUser(null);
-              }}
-            >
-              退出
-            </Button>
           </div>
         </div>
       </div>
@@ -94,7 +101,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/90 text-lg mb-2">我的星星</p>
-              <h2 className="text-5xl font-bold">{currentUser.totalStars}</h2>
+              <h2 className="text-5xl font-bold">{currentUser.star_balance}</h2>
             </div>
             <Image
               src="/star.png"

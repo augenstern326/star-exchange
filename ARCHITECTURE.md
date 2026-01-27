@@ -2,7 +2,7 @@
 
 ## 高层架构
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────────────────┐
 │                      客户端 (Next.js)                         │
 ├─────────────────────────────────────────────────────────────┤
@@ -98,13 +98,13 @@
 │  └──────────────────────────────────────────────────────┘   │
 │                                                              │
 └──────────────────────────────────────────────────────────────┘
-```
+\`\`\`
 
 ## 数据流图
 
 ### 登录流程
 
-```
+\`\`\`
 用户输入
   ├─ 用户名: "child1"
   ├─ 密码: "child123"
@@ -145,11 +145,11 @@
         │
         ▼
    重定向到应用页面
-```
+\`\`\`
 
 ### 数据库初始化流程
 
-```
+\`\`\`
 应用启动 (app/layout.tsx)
     │
     ▼
@@ -180,11 +180,11 @@ SELECT COUNT(*) FROM users
     │
     ▼
 返回初始化结果
-```
+\`\`\`
 
 ## 密码加密流程
 
-```
+\`\`\`
 用户注册/登录
     │
     ├─ 输入密码: "password123"
@@ -214,11 +214,11 @@ SELECT COUNT(*) FROM users
     ├─ 调用 verifyPassword(输入密码, 哈希)
     │
     └─ 比较新生成的哈希与存储的哈希
-```
+\`\`\`
 
 ## 模块依赖关系
 
-```
+\`\`\`
 app/layout.tsx
     │
     ├─→ components/db-initializer.tsx
@@ -235,11 +235,11 @@ app/layout.tsx
         └─→ app/api/auth/login/route.ts
             └─→ lib/db.ts
             └─→ lib/crypto.ts
-```
+\`\`\`
 
 ## 数据库索引策略
 
-```
+\`\`\`
 users 表:
 ├─ PRIMARY KEY: id
 ├─ UNIQUE: username
@@ -273,11 +273,11 @@ star_transactions 表:
 ├─ FOREIGN KEY: parent_id
 ├─ INDEX: child_id (查询特定小孩的交易)
 └─ INDEX: transaction_type (按交易类型过滤)
-```
+\`\`\`
 
 ## 文件结构
 
-```
+\`\`\`
 ├── app/
 │   ├── layout.tsx                    # RootLayout (含DBInitializer)
 │   ├── login/
@@ -326,7 +326,7 @@ star_transactions 表:
 ├── DATABASE_MIGRATION.md             # 迁移文档
 ├── ARCHITECTURE.md                   # 本文件
 └── CHECKLIST.md                      # 检查清单
-```
+\`\`\`
 
 ## 关键设计决定
 

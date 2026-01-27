@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TransactionStore } from '@/lib/data-store';
+import { sql } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const childId = searchParams.get('childId');
 
-    let transactions = TransactionStore.getAll();
+    let transactions;
     
-    if (userId) {
-      transactions = TransactionStore.getByUser(userId);
+    if (childId) {
+      transactions = await sql`SELECT * FROM star_transactions WHERE child_id = ${parseInt(childId)} ORDER BY created_at DESC`;
+    } else {
+      transactions = await sql`SELECT * FROM star_transactions ORDER BY created_at DESC`;
     }
-
-    // Sort by date descending
-    transactions.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return NextResponse.json(transactions);
   } catch (error) {
+    console.error('[v0] Failed to fetch transactions:', error);
     return NextResponse.json(
       { error: '获取交易记录失败' },
       { status: 500 }

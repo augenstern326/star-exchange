@@ -353,7 +353,7 @@
 
 使用以下表格跟踪你的阅读进度：
 
-```markdown
+\`\`\`markdown
 - [ ] README.md
 - [ ] QUICK_START.md
 - [ ] NEON_SETUP.md
@@ -363,7 +363,7 @@
 - [ ] NEON_IMPLEMENTATION_SUMMARY.md
 - [ ] IMPLEMENTATION_COMPLETE.md
 - [ ] scripts/manual-init.md
-```
+\`\`\`
 
 ---
 

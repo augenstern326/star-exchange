@@ -1,7 +1,9 @@
--- 星星存折应用数据库初始化脚本
--- PostgreSQL 12+
+-- Star Book Database Initialization Script
+-- Execute this script manually in your Neon PostgreSQL database
+-- This script creates all necessary tables and indexes.
+-- You will need to manually insert user data using SQL INSERT statements.
 
--- 用户表（家长和儿童）
+-- Users table (for both parents and children)
 CREATE TABLE IF NOT EXISTS users (
   id BIGSERIAL PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
@@ -104,8 +106,23 @@ CREATE TABLE IF NOT EXISTS star_transactions (
   FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- 创建索引以提高查询性能
+-- Additional indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_tasks_child_status ON tasks(child_id, status);
 CREATE INDEX IF NOT EXISTS idx_exchanges_product ON exchanges(product_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_child ON star_transactions(child_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_type ON star_transactions(transaction_type);
+
+-- Database initialization complete!
+-- 
+-- IMPORTANT: You must now create users manually using SQL INSERT statements.
+-- 
+-- Example 1: Create a parent user
+-- INSERT INTO users (username, email, password_hash, user_type, nickname, star_balance)
+-- VALUES ('parent1', 'parent@example.com', '$2b$10$...hashed_password...', 'parent', '爸爸', 0);
+--
+-- Example 2: Create a child user (replace parent_user_id with actual parent ID)
+-- INSERT INTO users (username, email, password_hash, user_type, parent_id, nickname, star_balance)
+-- VALUES ('child1', 'child@example.com', '$2b$10$...hashed_password...', 'child', 1, '小明', 50);
+--
+-- Password hashing: Use bcrypt to hash passwords before storing them.
+-- The application expects bcrypt-hashed passwords in the password_hash field.

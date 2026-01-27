@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaskStore, UserStore, TransactionStore, Task, StarTransaction } from '@/lib/data-store';
+import { sql } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,16 +7,19 @@ export async function GET(request: NextRequest) {
     const parentId = searchParams.get('parentId');
     const childId = searchParams.get('childId');
 
-    let tasks = TaskStore.getAll();
+    let tasks;
     
     if (parentId) {
-      tasks = TaskStore.getByParent(parentId);
+      tasks = await sql`SELECT * FROM tasks WHERE parent_id = ${parseInt(parentId)} ORDER BY created_at DESC`;
     } else if (childId) {
-      tasks = TaskStore.getByChild(childId);
+      tasks = await sql`SELECT * FROM tasks WHERE child_id = ${parseInt(childId)} ORDER BY created_at DESC`;
+    } else {
+      tasks = await sql`SELECT * FROM tasks ORDER BY created_at DESC`;
     }
 
     return NextResponse.json(tasks);
   } catch (error) {
+    console.error('[v0] Failed to fetch tasks:', error);
     return NextResponse.json(
       { error: '获取任务失败' },
       { status: 500 }
@@ -25,33 +28,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json();
-    
-    const newTask: Task = {
-      id: `task_${Date.now()}`,
-      title: data.title,
-      description: data.description || '',
-      reward: data.reward || 0,
-      penalty: data.penalty,
-      requiresApproval: data.requiresApproval || true,
-      parentId: data.parentId,
-      childId: data.childId,
-      status: 'pending',
-      dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const created = TaskStore.create(newTask);
-    return NextResponse.json(
-      { success: true, task: created },
-      { status: 201 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: '创建任务失败' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { error: '任务创建已禁用。请使用对应的管理界面创建任务。' },
+    { status: 405 }
+  );
 }

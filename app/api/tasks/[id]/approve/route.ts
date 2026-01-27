@@ -1,51 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaskStore, UserStore, TransactionStore } from '@/lib/data-store';
+import { sql } from '@/lib/db';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const taskId = params.id;
+    const taskId = parseInt(params.id);
     const { approved } = await request.json();
 
-    const task = TaskStore.getById(taskId);
-    if (!task) {
+    const taskResult = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
+    if (taskResult.length === 0) {
       return NextResponse.json(
         { error: '任务不存在' },
         { status: 404 }
       );
     }
 
+    const task = taskResult[0];
+
     if (approved) {
       // Approve the task and award stars
-      TaskStore.update(taskId, { status: 'completed' });
+      await sql`
+        UPDATE tasks 
+        SET status = 'approved', approved_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ${taskId}
+      `;
       
-      if (task.childId && task.reward > 0) {
-        const user = UserStore.updateStars(task.childId, task.reward);
+      if (task.child_id && task.reward_stars > 0) {
+        // Update child's star balance
+        await sql`
+          UPDATE users 
+          SET star_balance = star_balance + ${task.reward_stars}, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ${task.child_id}
+        `;
         
         // Record transaction
-        TransactionStore.create({
-          id: `trans_${Date.now()}`,
-          userId: task.childId,
-          amount: task.reward,
-          type: 'task_reward',
-          description: `完成任务: ${task.title}`,
-          taskId: taskId,
-          createdAt: new Date(),
-        });
+        await sql`
+          INSERT INTO star_transactions (child_id, parent_id, transaction_type, amount, reference_type, reference_id, description)
+          VALUES (${task.child_id}, ${task.parent_id}, 'task_approved', ${task.reward_stars}, 'task', ${taskId}, ${'任务奖励: ' + task.title})
+        `;
       }
     } else {
       // Reject the task
-      TaskStore.update(taskId, { status: 'rejected' });
+      await sql`
+        UPDATE tasks 
+        SET status = 'rejected', updated_at = CURRENT_TIMESTAMP
+        WHERE id = ${taskId}
+      `;
     }
 
-    const updated = TaskStore.getById(taskId);
+    const updated = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
     return NextResponse.json({
       success: true,
-      task: updated,
+      task: updated[0],
     });
   } catch (error) {
+    console.error('[v0] Failed to approve task:', error);
     return NextResponse.json(
       { error: '任务审批失败' },
       { status: 500 }

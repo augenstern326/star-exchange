@@ -2,7 +2,6 @@ import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { DBInitializer } from '@/components/db-initializer'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -45,7 +44,6 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className={`font-sans antialiased`}>
-        <DBInitializer />
         {children}
         <Analytics />
       {/* v0 – built-with badge */}

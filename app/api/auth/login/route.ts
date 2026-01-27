@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserStore } from '@/lib/data-store';
+import { sql, initializeDatabase } from '@/lib/db';
 import { verifyPassword } from '@/lib/crypto';
 
 export async function POST(request: NextRequest) {
   try {
+    // Initialize database on first request
+    await initializeDatabase();
+
     const { username, password, userType } = await request.json();
 
     if (!username || !password) {
@@ -13,11 +16,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by username
-    const user = UserStore.getByUsername(username);
+    // Query user from database
+    const users = await sql`
+      SELECT id, username, email, password_hash, user_type, parent_id, nickname, avatar_url, star_balance
+      FROM users
+      WHERE username = ${username} AND user_type = ${userType}
+      LIMIT 1
+    `;
 
-    // Verify user exists, has correct type, and password matches
-    if (!user || user.userType !== userType || !verifyPassword(password, user.passwordHash)) {
+    if (users.length === 0) {
+      return NextResponse.json(
+        { error: '用户名、密码或身份类型错误' },
+        { status: 401 }
+      );
+    }
+
+    const user = users[0];
+
+    // Verify password
+    if (!verifyPassword(password, user.password_hash)) {
       return NextResponse.json(
         { error: '用户名、密码或身份类型错误' },
         { status: 401 }
@@ -25,10 +42,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Return user data (without password hash)
-    const { passwordHash, ...userWithoutPassword } = user;
+    const { password_hash, ...userWithoutPassword } = user;
     return NextResponse.json({
       success: true,
-      user: userWithoutPassword,
+      user: {
+        id: userWithoutPassword.id.toString(),
+        username: userWithoutPassword.username,
+        email: userWithoutPassword.email,
+        userType: userWithoutPassword.user_type,
+        parentId: userWithoutPassword.parent_id?.toString(),
+        nickname: userWithoutPassword.nickname,
+        avatarUrl: userWithoutPassword.avatar_url,
+        totalStars: userWithoutPassword.star_balance,
+        createdAt: new Date(),
+      },
     });
   } catch (error) {
     console.error('[v0] Login error:', error);

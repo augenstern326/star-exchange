@@ -8,23 +8,23 @@
 
 访问以下 URL（将 `YOUR_DOMAIN` 替换为你的 Vercel URL 或本地地址）：
 
-```
+\`\`\`
 POST http://YOUR_DOMAIN/api/init
-```
+\`\`\`
 
 使用 curl 命令：
 
-```bash
+\`\`\`bash
 curl -X POST http://localhost:3000/api/init
-```
+\`\`\`
 
 使用 fetch：
 
-```javascript
+\`\`\`javascript
 fetch('/api/init', { method: 'POST' })
   .then(r => r.json())
   .then(console.log)
-```
+\`\`\`
 
 ## 方法 2: 直接在 Neon 控制台运行 SQL
 
@@ -33,7 +33,7 @@ fetch('/api/init', { method: 'POST' })
 3. 点击"SQL Editor"
 4. 将以下 SQL 复制到编辑器中并执行：
 
-```sql
+\`\`\`sql
 -- 创建 users 表
 CREATE TABLE IF NOT EXISTS users (
   id BIGSERIAL PRIMARY KEY,
@@ -152,7 +152,7 @@ ON CONFLICT (username) DO NOTHING;
 -- 为 child1 设置 parent_id
 UPDATE users SET parent_id = (SELECT id FROM users WHERE username = 'parent1')
 WHERE username = 'child1';
-```
+\`\`\`
 
 **注意**: 上面的密码哈希是示例。为了设置正确的哈希密码，建议使用 API 端点方法。
 
@@ -160,19 +160,19 @@ WHERE username = 'child1';
 
 运行 seed 脚本（需要 Node.js 和 ts-node）：
 
-```bash
+\`\`\`bash
 # 首先设置环境变量
 export DATABASE_URL="postgresql://user:password@host/database"
 
 # 运行 seed 脚本
 npx ts-node scripts/seed-database.ts
-```
+\`\`\`
 
 ## 验证初始化
 
 初始化完成后，可以验证数据库：
 
-```sql
+\`\`\`sql
 -- 检查表是否已创建
 SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public' 
@@ -184,13 +184,13 @@ SELECT id, username, user_type, nickname FROM users;
 -- 检查索引
 SELECT indexname FROM pg_indexes 
 WHERE tablename = 'users';
-```
+\`\`\`
 
 ## 重置数据库
 
 如果需要重置演示数据：
 
-```sql
+\`\`\`sql
 -- 删除所有数据（但保留表结构）
 TRUNCATE TABLE star_transactions CASCADE;
 TRUNCATE TABLE exchanges CASCADE;
@@ -200,42 +200,42 @@ TRUNCATE TABLE users CASCADE;
 
 -- 然后重新运行插入演示用户的 SQL
 -- (见上面的 SQL 代码)
-```
+\`\`\`
 
 或者删除整个数据库并重新创建（生产环境不推荐）：
 
-```sql
+\`\`\`sql
 -- 谨慎：这会删除所有表和数据
 DROP TABLE IF EXISTS star_transactions CASCADE;
 DROP TABLE IF EXISTS exchanges CASCADE;
 DROP TABLE IF EXISTS tasks CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
-```
+\`\`\`
 
 ## 故障排除
 
 ### 连接错误
 
-```
+\`\`\`
 Error: connect ECONNREFUSED
-```
+\`\`\`
 
 **解决方案**: 检查 DATABASE_URL 是否正确设置。
 
 ### 权限错误
 
-```
+\`\`\`
 ERROR: permission denied for schema public
-```
+\`\`\`
 
 **解决方案**: 确保你的 Neon 用户有创建表的权限。
 
 ### 表已存在
 
-```
+\`\`\`
 ERROR: relation "users" already exists
-```
+\`\`\`
 
 **解决方案**: 这是正常的，脚本使用了 `IF NOT EXISTS`。如果需要重置，先删除表。
 

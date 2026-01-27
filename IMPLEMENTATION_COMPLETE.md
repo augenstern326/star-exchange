@@ -59,7 +59,7 @@
 ## 📁 新增文件列表
 
 ### 核心代码文件
-```
+\`\`\`
 /lib/db.ts
   - Neon 数据库连接和初始化
   - initializeDatabase() 函数
@@ -78,10 +78,10 @@
   - React 组件
   - 自动调用 /api/init
   - 错误处理
-```
+\`\`\`
 
 ### 文档文件
-```
+\`\`\`
 /README.md
   - 项目主文档
   - 快速开始
@@ -146,12 +146,12 @@
 /IMPLEMENTATION_COMPLETE.md
   - 本文件
   - 完成状态总结
-```
+\`\`\`
 
 ## 🔄 修改的文件列表
 
 ### 登录相关
-```
+\`\`\`
 /app/api/auth/login/route.ts
   - 改用数据库查询
   - username + password + userType 参数
@@ -168,30 +168,30 @@
   - 改用用户名密码
   - 更新演示账号信息
   - 添加 userType: 'parent' 参数
-```
+\`\`\`
 
 ### 数据模型
-```
+\`\`\`
 /lib/data-store.ts
   - User 接口更新（username, passwordHash, userType）
   - 添加 parentId 支持
   - 新增辅助方法
   - 保留向后兼容性
-```
+\`\`\`
 
 ### 应用布局
-```
+\`\`\`
 /app/layout.tsx
   - 导入 DBInitializer 组件
   - 在 RootLayout 中使用组件
   - 自动初始化数据库
-```
+\`\`\`
 
 ## 🚀 立即开始
 
 ### 方式 1：本地开发（最快）
 
-```bash
+\`\`\`bash
 # 1. 创建 .env.local
 echo "DATABASE_URL=your_neon_url" > .env.local
 
@@ -201,11 +201,11 @@ npm run dev
 
 # 3. 浏览器访问
 # http://localhost:3000
-```
+\`\`\`
 
 ### 方式 2：部署到 Vercel
 
-```bash
+\`\`\`bash
 # 1. 推送代码
 git add .
 git commit -m "Add Neon integration"
@@ -217,7 +217,7 @@ git push
 # - 触发部署
 
 # 完成！
-```
+\`\`\`
 
 ## 🎓 学习资源
 
@@ -239,7 +239,7 @@ git push
 
 ### 本地验证清单
 
-```
+\`\`\`
 □ npm run dev 成功启动
 □ 浏览器访问 http://localhost:3000
 □ 浏览器控制台有 [v0] 日志
@@ -250,11 +250,11 @@ git push
 □ 测试错误登录提示
 □ 在 Neon Console 中验证数据库表已创建
 □ 在 Neon Console 中验证演示用户已创建
-```
+\`\`\`
 
 ### 生产验证清单
 
-```
+\`\`\`
 □ 代码推送到 GitHub
 □ Vercel 部署成功
 □ DATABASE_URL 环境变量已设置
@@ -264,7 +264,7 @@ git push
 □ 验证数据持久化
 □ 查看 Vercel 日志
 □ 查看 Neon Console 日志
-```
+\`\`\`
 
 ## 📊 项目统计
 
@@ -359,7 +359,7 @@ git push
 ## 💡 最佳实践
 
 ### 开发
-```bash
+\`\`\`bash
 # 始终使用 .env.local（不要提交到 Git）
 echo ".env.local" >> .gitignore
 
@@ -368,24 +368,24 @@ await sql`SELECT * FROM users WHERE id = ${userId}`
 
 # 错误处理
 try { ... } catch (error) { console.error('[v0]', error) }
-```
+\`\`\`
 
 ### 部署
-```
+\`\`\`
 ✅ 分离开发和生产数据库
 ✅ 定期备份数据库
 ✅ 监控应用性能
 ✅ 查看错误日志
 ✅ 定期更新依赖
-```
+\`\`\`
 
 ### 维护
-```
+\`\`\`
 ✅ 监控数据库大小
 ✅ 清理过期数据
 ✅ 优化慢查询
 ✅ 定期安全审计
-```
+\`\`\`
 
 ## 📞 获取帮助
 
@@ -407,7 +407,7 @@ try { ... } catch (error) { console.error('[v0]', error) }
 
 ## ✨ 项目现状
 
-```
+\`\`\`
 项目状态: ✅ 生产就绪
 功能完整度: 100%
 文档完整度: 95%
@@ -415,7 +415,7 @@ try { ... } catch (error) { console.error('[v0]', error) }
 部署准备: 完全就绪
 
 🚀 可以立即部署！
-```
+\`\`\`
 
 ## 🎊 总结
 

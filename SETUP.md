@@ -35,15 +35,15 @@
    - 记下连接字符串
 
 2. **设置环境变量**
-   ```bash
+   \`\`\`bash
    DATABASE_URL=postgresql://user:password@host/dbname
-   ```
+   \`\`\`
 
 3. **初始化数据库**
-   ```bash
+   \`\`\`bash
    # 使用 psql 连接到数据库
    psql $DATABASE_URL -f scripts/01-init-database.sql
-   ```
+   \`\`\`
 
 ### 数据库表结构
 
@@ -62,11 +62,11 @@
 要从内存存储迁移到实际数据库：
 
 1. 安装PostgreSQL驱动程序
-   ```bash
+   \`\`\`bash
    npm install pg
    # 或使用 @neondatabase/serverless（更轻量）
    npm install @neondatabase/serverless
-   ```
+   \`\`\`
 
 2. 创建新的数据库访问层（替换`lib/data-store.ts`）
    - 实现与现有API相同的接口

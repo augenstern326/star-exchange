@@ -49,16 +49,16 @@
 ### 2. 本地配置
 
 创建 `.env.local`：
-```
+\`\`\`
 DATABASE_URL=postgresql://your_user:your_password@your_host/your_database
-```
+\`\`\`
 
 ### 3. 启动应用
 
-```bash
+\`\`\`bash
 npm install
 npm run dev
-```
+\`\`\`
 
 应用会自动：
 1. 初始化数据库
@@ -79,15 +79,15 @@ npm run dev
 ## 📁 新增文件
 
 ### 核心代码
-```
+\`\`\`
 /lib/db.ts                    - Neon 数据库连接和初始化
 /lib/crypto.ts                - 密码加密和验证
 /app/api/init/route.ts        - 数据库初始化端点
 /components/db-initializer.tsx - 自动初始化组件
-```
+\`\`\`
 
 ### 文档
-```
+\`\`\`
 /QUICK_START.md               - 快速开始指南
 /NEON_SETUP.md                - 完整设置指南
 /DATABASE_MIGRATION.md        - 迁移说明
@@ -95,17 +95,17 @@ npm run dev
 /CHECKLIST.md                 - 检查清单
 /scripts/manual-init.md       - 手动初始化步骤
 /scripts/seed-database.ts     - 数据库 Seed 脚本
-```
+\`\`\`
 
 ## 🔄 修改的文件
 
-```
+\`\`\`
 /app/api/auth/login/route.ts         - 改用数据库查询
 /app/login/page.tsx                  - 新增身份选择和用户名密码表单
 /app/parent/login/page.tsx           - 更新为用户名密码登录
 /app/layout.tsx                      - 添加 DBInitializer 组件
 /lib/data-store.ts                   - 更新用户模型
-```
+\`\`\`
 
 ## 🔐 安全特性
 
@@ -127,7 +127,7 @@ npm run dev
 ## 📊 数据库架构
 
 ### users 表
-```
+\`\`\`
 id (BIGSERIAL)           - 主键，自增
 username (VARCHAR 50)    - 唯一用户名
 email (VARCHAR 100)      - 邮箱
@@ -137,7 +137,7 @@ parent_id (BIGINT)       - 父级用户 ID
 nickname (VARCHAR)       - 昵称
 star_balance (INT)       - 星星余额
 ... 更多字段
-```
+\`\`\`
 
 ### 其他表
 - **tasks** - 任务管理
@@ -150,11 +150,11 @@ star_balance (INT)       - 星星余额
 ## 🌐 部署到 Vercel
 
 1. 推送代码到 GitHub
-```bash
+\`\`\`bash
 git add .
 git commit -m "Add Neon PostgreSQL integration"
 git push
-```
+\`\`\`
 
 2. 在 Vercel 中配置
    - 连接 GitHub 仓库
@@ -280,7 +280,7 @@ A: 目前没有密码重置功能。需要自己实现或直接在 Neon Console 
 
 你的应用现已完全准备好使用 Neon PostgreSQL！
 
-```
+\`\`\`
 ✅ 代码完成
 ✅ 文档完成
 ✅ 安全部署
@@ -288,19 +288,19 @@ A: 目前没有密码重置功能。需要自己实现或直接在 Neon Console 
 ✅ 演示数据
 
 🚀 准备好开始了！
-```
+\`\`\`
 
 ### 下一步：
 
 1. **本地测试**
-   ```bash
+   \`\`\`bash
    npm run dev
-   ```
+   \`\`\`
 
 2. **部署到 Vercel**
-   ```bash
+   \`\`\`bash
    git push
-   ```
+   \`\`\`
 
 3. **监控应用**
    - 检查 Vercel 日志

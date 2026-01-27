@@ -92,7 +92,7 @@
 
 ### 验证 SQL 命令
 
-```sql
+\`\`\`sql
 -- 检查表
 SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public';
@@ -102,7 +102,7 @@ SELECT id, username, user_type, nickname FROM users;
 
 -- 检查索引
 SELECT indexname FROM pg_indexes WHERE tablename = 'users';
-```
+\`\`\`
 
 ## 📝 文档
 
@@ -169,7 +169,7 @@ SELECT indexname FROM pg_indexes WHERE tablename = 'users';
 
 当所有上述检查都完成时，项目已准备就绪！
 
-```
+\`\`\`
 ✅ 代码完成
 ✅ 配置完成
 ✅ 测试完成
@@ -178,7 +178,7 @@ SELECT indexname FROM pg_indexes WHERE tablename = 'users';
 ✅ 生产准备完成
 
 🚀 项目已完全准备好部署！
-```
+\`\`\`
 
 ---
 

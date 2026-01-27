@@ -15,9 +15,9 @@
 
 在你的 Vercel 项目或本地 `.env.local` 文件中添加以下环境变量：
 
-```
+\`\`\`
 DATABASE_URL=postgresql://user:password@host/database
-```
+\`\`\`
 
 ### 获取 DATABASE_URL：
 
@@ -99,16 +99,16 @@ DATABASE_URL=postgresql://user:password@host/database
 ### 使用本地 Neon 连接
 
 1. 创建 `.env.local` 文件：
-```bash
+\`\`\`bash
 DATABASE_URL=postgresql://your_username:your_password@your_host/your_database
-```
+\`\`\`
 
 2. 运行开发服务器：
-```bash
+\`\`\`bash
 npm run dev
 # 或
 yarn dev
-```
+\`\`\`
 
 3. 应用会自动初始化数据库（首次运行时）
 
@@ -140,14 +140,14 @@ Neon 支持分支功能，非常适合开发和测试：
 
 ### Q: 如何重置演示数据？
 
-```sql
+\`\`\`sql
 -- 连接到你的 Neon 数据库并运行：
 DELETE FROM users;
 DELETE FROM tasks;
 DELETE FROM products;
 DELETE FROM exchanges;
 DELETE FROM star_transactions;
-```
+\`\`\`
 
 然后访问 `/api/init`，新的演示用户会自动创建。
 
@@ -175,10 +175,10 @@ DELETE FROM star_transactions;
 
 应用使用 `console.log("[v0] ...")` 格式的日志：
 
-```typescript
+\`\`\`typescript
 console.log('[v0] Database initialized successfully');
 console.error('[v0] Database initialization error:', error);
-```
+\`\`\`
 
 检查浏览器控制台或 Next.js 终端输出以查看这些日志。
 

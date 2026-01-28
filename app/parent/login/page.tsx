@@ -9,7 +9,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { toast } from 'sonner';
+import {toast} from 'sonner';
+import { message } from 'antd';
 
 export default function ParentLogin() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function ParentLogin() {
     e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
-      alert('请输入用户名和密码');
+      message.error('请输入用户名和密码');
       return;
     }
 
@@ -34,7 +35,7 @@ export default function ParentLogin() {
 
       if (!response.ok) {
         const data = await response.json();
-        alert(data.error || '登录失败');
+        message.error(data.error || '登录失败');
         setLoading(false);
         return;
       }
@@ -42,12 +43,11 @@ export default function ParentLogin() {
       const data = await response.json();
 
       localStorage.setItem('currentUser', JSON.stringify(data.user));
-      alert('登录成功！');
+      message.success('登录成功！');
       router.push('/parent/dashboard');
 
     } catch (error) {
-      console.error('[v0] Login error:', error);
-      alert('登录失败，请稍后重试');
+      message.error('登录失败，请稍后重试');
       setLoading(false);
     }
   };

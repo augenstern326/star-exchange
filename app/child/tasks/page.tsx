@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import { message } from 'antd';
 
 interface Task {
   id: string;
@@ -67,16 +67,16 @@ export default function Tasks() {
       });
 
       if (!response.ok) {
-        alert('提交失败');
+        message.error('提交失败');
         return;
       }
 
-      alert('任务已提交，等待审批！');
+      message.success('任务已提交，等待审批！');
       if (currentUser) {
         fetchTasks(currentUser.id);
       }
     } catch (error) {
-      alert('提交出错');
+      message.error('提交出错');
     }
   };
 

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
+import { message } from 'antd';
 
 interface User {
   id: string;
@@ -27,8 +27,8 @@ export default function CreateProduct() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    price: 0,
-    inventory: 0,
+    price: '',
+    inventory: '',
     image: '',
   });
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -81,17 +81,17 @@ export default function CreateProduct() {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      alert('请输入商品名称');
+      message.error('请输入商品名称');
       return;
     }
 
     if (formData.price <= 0) {
-      alert('请输入正确的价格');
+      message.error('请输入正确的价格');
       return;
     }
 
     if (formData.inventory < 0) {
-      alert('库存不能为负数');
+      message.error('库存不能为负数');
       return;
     }
 
@@ -113,15 +113,15 @@ export default function CreateProduct() {
       });
 
       if (!response.ok) {
-        alert('创建商品失败');
+        message.error('创建商品失败');
         setSubmitting(false);
         return;
       }
 
-      alert('商品已发布！');
+      message.success('商品已发布！');
       router.push('/parent/products');
     } catch (error) {
-      alert('创建商品出错');
+      message.error('创建商品出错');
       setSubmitting(false);
     }
   };

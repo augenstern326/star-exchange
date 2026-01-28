@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import { message } from 'antd';
 
 interface Product {
   id: string;
@@ -70,17 +70,17 @@ export default function ParentProducts() {
       });
 
       if (!response.ok) {
-        alert('更新库存失败');
+        message.error('更新库存失败');
         return;
       }
 
-      alert('库存已更新');
+      message.success('库存已更新');
       setEditingId(null);
       if (currentUser) {
         fetchProducts(currentUser.id);
       }
     } catch (error) {
-      alert('更新出错');
+      message.error('更新出错');
     }
   };
 
@@ -93,16 +93,16 @@ export default function ParentProducts() {
       });
 
       if (!response.ok) {
-        alert('删除失败');
+        message.error('删除失败');
         return;
       }
 
-      alert('商品已删除');
+      message.success('商品已删除');
       if (currentUser) {
         fetchProducts(currentUser.id);
       }
     } catch (error) {
-      alert('删除出错');
+      message.error('删除出错');
     }
   };
 

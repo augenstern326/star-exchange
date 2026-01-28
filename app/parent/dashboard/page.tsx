@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,6 @@ export default function ParentDashboard() {
       isParent: user.isParent,
       childName: user.childName,
     });
-    console.log(currentUser)
     setLoading(false);
   }, [router]);
 
@@ -137,13 +135,13 @@ export default function ParentDashboard() {
           {/*  </Card>*/}
           {/*</Link>*/}
 
-          {/*/!* 数据统计 *!/*/}
-          {/*<Link href="/parent/analytics">*/}
-          {/*  <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">*/}
-          {/*    <div className="text-5xl">📊</div>*/}
-          {/*    <h3 className="text-xl font-bold text-foreground">数据统计</h3>*/}
-          {/*  </Card>*/}
-          {/*</Link>*/}
+          {/* 数据统计 */}
+          <Link href="/parent/analytics">
+            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
+              <div className="text-5xl">📊</div>
+              <h3 className="text-xl font-bold text-foreground">积分记录</h3>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import { message } from 'antd';
 
 interface Task {
   id: string;
@@ -50,7 +50,6 @@ export default function ParentTasks() {
     try {
       const response = await fetch(`/api/tasks?parentId=${parentId}`);
       const data = await response.json();
-      console.log(data)
       setTasks(data);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
@@ -69,16 +68,16 @@ export default function ParentTasks() {
       });
 
       if (!response.ok) {
-        alert('审批失败');
+        message.error('审批失败');
         return;
       }
 
-      alert('任务已批准！');
+      message.success('任务已批准！');
       if (currentUser) {
         fetchTasks(currentUser.id);
       }
     } catch (error) {
-      alert('审批出错');
+      message.error('审批出错');
     }
   };
 
@@ -91,16 +90,16 @@ export default function ParentTasks() {
       });
 
       if (!response.ok) {
-        alert('拒绝失败');
+        message.error('拒绝失败');
         return;
       }
 
-      alert('任务已拒绝');
+      message.error('任务已拒绝');
       if (currentUser) {
         fetchTasks(currentUser.id);
       }
     } catch (error) {
-      alert('操作出错');
+      message.error('操作出错');
     }
   };
 

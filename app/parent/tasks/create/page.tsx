@@ -10,8 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
+import { message } from 'antd';
 
 interface User {
   id: string;
@@ -29,8 +28,8 @@ export default function CreateTask() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    reward: 0,
-    penalty: 0,
+    reward: '',
+    penalty: '',
     requiresApproval: true,
   });
 
@@ -63,12 +62,12 @@ export default function CreateTask() {
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      alert('请输入任务标题');
+      message.error('请输入任务标题');
       return;
     }
 
     if (taskType === 'approval' && formData.reward <= 0) {
-      alert('请输入正确的奖励星数');
+      message.error('请输入正确的奖励星数');
       return;
     }
 
@@ -81,7 +80,6 @@ export default function CreateTask() {
         requiresApproval: taskType === 'approval',
         parentId: currentUser?.id,
       };
-      console.log(taskData)
       const response = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,15 +87,15 @@ export default function CreateTask() {
       });
 
       if (!response.ok) {
-        alert('创建任务失败');
+        message.error('创建任务失败');
         setSubmitting(false);
         return;
       }
 
-      alert('任务已发布！');
+      message.success('任务已发布！');
       router.push('/parent/tasks');
     } catch (error) {
-      alert('创建任务出错');
+      message.error('创建任务出错');
       setSubmitting(false);
     }
   };

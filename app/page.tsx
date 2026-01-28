@@ -35,7 +35,6 @@ export default function Home() {
         });
         localStorage.setItem('currentUser', JSON.stringify(user));
       } catch (err) {
-        console.error('[v0] Failed to load child user:', err);
         setError(err instanceof Error ? err.message : '加载失败');
       } finally {
         setLoading(false);

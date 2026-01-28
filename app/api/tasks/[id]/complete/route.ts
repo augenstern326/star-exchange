@@ -7,7 +7,7 @@ export async function POST(
 ) {
   try {
     const taskId = (await params).id;
-    const { approved } = await request.json();
+    const { completed } = await request.json();
 
     const taskResult = await sql`SELECT * FROM tasks WHERE id = ${taskId}`;
     if (taskResult.length === 0) {
@@ -19,28 +19,13 @@ export async function POST(
 
     const task = taskResult[0];
 
-    if (approved) {
+    if (completed) {
       // Approve the task and award stars
       await sql`
         UPDATE tasks 
-        SET status = 'approved', approved_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        SET status = 'completed', completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
         WHERE id = ${taskId}
       `;
-      
-      if (task.child_id && task.reward > 0) {
-        // Update child's star balance
-        await sql`
-          UPDATE users 
-          SET star_balance = star_balance + ${task.reward}, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ${task.child_id}
-        `;
-        
-        // Record transaction
-        await sql`
-          INSERT INTO star_transactions (child_id, parent_id, transaction_type, amount, reference_type, reference_id, description)
-          VALUES (${task.child_id}, ${task.parent_id}, 'task_approved', ${task.reward}, 'task', ${taskId}, ${'任务奖励: ' + task.title})
-        `;
-      }
     } else {
       // Reject the task
       await sql`

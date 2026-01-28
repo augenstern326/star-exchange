@@ -53,27 +53,6 @@ export default function Tasks() {
       setTasks(data);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
-      // Mock data
-      setTasks([
-        {
-          id: 'task1',
-          title: '做完作业',
-          description: '完成今天的数学作业',
-          reward: 10,
-          status: 'pending',
-          requiresApproval: true,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: 'task2',
-          title: '整理房间',
-          description: '把房间收拾干净',
-          reward: 5,
-          status: 'pending',
-          requiresApproval: true,
-          createdAt: new Date().toISOString(),
-        },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -81,23 +60,23 @@ export default function Tasks() {
 
   const handleCompleteTask = async (taskId: string) => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}/approve`, {
+      const response = await fetch(`/api/tasks/${taskId}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ approved: true }),
+        body: JSON.stringify({ completed: true }),
       });
 
       if (!response.ok) {
-        toast.error('提交失败');
+        alert('提交失败');
         return;
       }
 
-      toast.success('任务已提交，等待审批！');
+      alert('任务已提交，等待审批！');
       if (currentUser) {
         fetchTasks(currentUser.id);
       }
     } catch (error) {
-      toast.error('提交出错');
+      alert('提交出错');
     }
   };
 
@@ -106,7 +85,7 @@ export default function Tasks() {
       case 'pending':
         return '待完成';
       case 'completed':
-        return '已完成';
+        return '待批准';
       case 'approved':
         return '已批准';
       case 'rejected':
@@ -229,7 +208,7 @@ export default function Tasks() {
                           height={20}
                         />
                         <span className="font-semibold text-primary">
-                          +{task.reward} 星星
+                          {task.reward>=0 ? '+'+task.reward:task.reward}星星
                         </span>
                       </div>
                     </div>

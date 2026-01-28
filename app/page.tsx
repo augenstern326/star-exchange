@@ -125,7 +125,6 @@ export default function Home() {
                 height={64}
               />
               <h3 className="text-xl font-bold text-foreground">星星商城</h3>
-              <p className="text-sm text-muted-foreground">兑换心仪的礼物</p>
             </Card>
           </Link>
 
@@ -139,27 +138,26 @@ export default function Home() {
                 height={64}
               />
               <h3 className="text-xl font-bold text-foreground">星星任务</h3>
-              <p className="text-sm text-muted-foreground">完成任务赚星星</p>
             </Card>
           </Link>
 
           {/* 消费记录 */}
-          <Link href="/child/history">
-            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
-              <div className="text-5xl">📊</div>
-              <h3 className="text-xl font-bold text-foreground">消费记录</h3>
-              <p className="text-sm text-muted-foreground">查看星星流水</p>
-            </Card>
-          </Link>
+          {/*<Link href="/child/history">*/}
+          {/*  <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">*/}
+          {/*    <div className="text-5xl">📊</div>*/}
+          {/*    <h3 className="text-xl font-bold text-foreground">消费记录</h3>*/}
+          {/*    <p className="text-sm text-muted-foreground">查看星星流水</p>*/}
+          {/*  </Card>*/}
+          {/*</Link>*/}
 
           {/* 我的兑换 */}
-          <Link href="/child/exchanges">
-            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
-              <div className="text-5xl">🎁</div>
-              <h3 className="text-xl font-bold text-foreground">我的兑换</h3>
-              <p className="text-sm text-muted-foreground">查看已兑换礼物</p>
-            </Card>
-          </Link>
+          {/*<Link href="/child/exchanges">*/}
+          {/*  <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">*/}
+          {/*    <div className="text-5xl">🎁</div>*/}
+          {/*    <h3 className="text-xl font-bold text-foreground">我的兑换</h3>*/}
+          {/*    <p className="text-sm text-muted-foreground">查看已兑换礼物</p>*/}
+          {/*  </Card>*/}
+          {/*</Link>*/}
         </div>
       </div>
     </div>

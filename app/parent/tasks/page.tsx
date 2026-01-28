@@ -50,6 +50,7 @@ export default function ParentTasks() {
     try {
       const response = await fetch(`/api/tasks?parentId=${parentId}`);
       const data = await response.json();
+      console.log(data)
       setTasks(data);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
@@ -68,16 +69,16 @@ export default function ParentTasks() {
       });
 
       if (!response.ok) {
-        toast.error('审批失败');
+        alert('审批失败');
         return;
       }
 
-      toast.success('任务已批准！');
+      alert('任务已批准！');
       if (currentUser) {
         fetchTasks(currentUser.id);
       }
     } catch (error) {
-      toast.error('审批出错');
+      alert('审批出错');
     }
   };
 
@@ -90,16 +91,16 @@ export default function ParentTasks() {
       });
 
       if (!response.ok) {
-        toast.error('拒绝失败');
+        alert('拒绝失败');
         return;
       }
 
-      toast.success('任务已拒绝');
+      alert('任务已拒绝');
       if (currentUser) {
         fetchTasks(currentUser.id);
       }
     } catch (error) {
-      toast.error('操作出错');
+      alert('操作出错');
     }
   };
 
@@ -108,7 +109,7 @@ export default function ParentTasks() {
       case 'pending':
         return '待处理';
       case 'completed':
-        return '已完成';
+        return '待批准';
       case 'approved':
         return '已批准';
       case 'rejected':
@@ -133,9 +134,9 @@ export default function ParentTasks() {
   };
 
   const filteredTasks = tasks.filter((task) => {
-    if (filter === 'pending') return task.status === 'pending';
+    if (filter === 'pending') return task.status === 'completed' || task.status === 'pending';
     if (filter === 'approved')
-      return task.status === 'completed' || task.status === 'approved';
+      return  task.status === 'approved';
     return true;
   });
 
@@ -179,7 +180,7 @@ export default function ParentTasks() {
             >
               {tab === 'all'
                 ? '全部任务'
-                : tab === 'pending'
+                : tab === 'pending' || tab === 'completed'
                   ? '待处理'
                   : '已完成'}
             </Button>
@@ -193,7 +194,7 @@ export default function ParentTasks() {
             <p className="text-lg text-foreground font-semibold">
               {filter === 'all'
                 ? '还没有任务'
-                : filter === 'pending'
+                : filter === 'pending' || tab === 'completed'
                   ? '没有待处理的任务'
                   : '还没有已完成的任务'}
             </p>
@@ -223,15 +224,13 @@ export default function ParentTasks() {
                     </p>
                     <div className="flex items-center gap-2 text-sm text-foreground">
                       <span className="text-2xl">⭐</span>
-                      <span className="font-semibold">奖励 {task.reward} 星星</span>
+                      {(task.reward>=0) && (<span className="font-semibold">奖励 {task.reward}  颗星星</span>)}
+                      {(task.reward<0) &&  (<span className="font-semibold">扣除 {-task.reward} 颗星星</span>)}
                     </div>
                   </div>
 
                   <div className="col-span-1">
-                    <p className="text-xs text-muted-foreground mb-2">
-                      {new Date(task.createdAt).toLocaleDateString('zh-CN')}
-                    </p>
-                    {task.status === 'pending' && task.requiresApproval && (
+                    {(task.status === 'completed')  && (
                       <div className="flex gap-2">
                         <Button
                           onClick={() => handleApprove(task.id)}

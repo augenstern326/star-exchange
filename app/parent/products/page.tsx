@@ -70,17 +70,17 @@ export default function ParentProducts() {
       });
 
       if (!response.ok) {
-        toast.error('更新库存失败');
+        alert('更新库存失败');
         return;
       }
 
-      toast.success('库存已更新');
+      alert('库存已更新');
       setEditingId(null);
       if (currentUser) {
         fetchProducts(currentUser.id);
       }
     } catch (error) {
-      toast.error('更新出错');
+      alert('更新出错');
     }
   };
 
@@ -93,16 +93,16 @@ export default function ParentProducts() {
       });
 
       if (!response.ok) {
-        toast.error('删除失败');
+        alert('删除失败');
         return;
       }
 
-      toast.success('商品已删除');
+      alert('商品已删除');
       if (currentUser) {
         fetchProducts(currentUser.id);
       }
     } catch (error) {
-      toast.error('删除出错');
+      alert('删除出错');
     }
   };
 

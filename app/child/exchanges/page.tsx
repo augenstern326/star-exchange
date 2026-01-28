@@ -54,27 +54,7 @@ export default function Exchanges() {
       setExchanges(enriched);
     } catch (error) {
       console.error('Failed to fetch exchanges:', error);
-      // Mock data
-      setExchanges([
-        {
-          id: 'exch1',
-          productId: 'prod1',
-          quantity: 1,
-          totalCost: 20,
-          status: 'completed',
-          createdAt: new Date(Date.now() - 172800000).toISOString(),
-          productName: '小玩具车',
-        },
-        {
-          id: 'exch2',
-          productId: 'prod3',
-          quantity: 2,
-          totalCost: 20,
-          status: 'pending',
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          productName: '糖果礼盒',
-        },
-      ]);
+
     } finally {
       setLoading(false);
     }

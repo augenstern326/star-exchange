@@ -20,7 +20,7 @@ export default function ParentLogin() {
     e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
-      toast.error('请输入用户名和密码');
+      alert('请输入用户名和密码');
       return;
     }
 
@@ -34,7 +34,7 @@ export default function ParentLogin() {
 
       if (!response.ok) {
         const data = await response.json();
-        toast.error(data.error || '登录失败');
+        alert(data.error || '登录失败');
         setLoading(false);
         return;
       }
@@ -42,12 +42,12 @@ export default function ParentLogin() {
       const data = await response.json();
 
       localStorage.setItem('currentUser', JSON.stringify(data.user));
-      toast.success('登录成功！');
+      alert('登录成功！');
       router.push('/parent/dashboard');
 
     } catch (error) {
       console.error('[v0] Login error:', error);
-      toast.error('登录失败，请稍后重试');
+      alert('登录失败，请稍后重试');
       setLoading(false);
     }
   };

@@ -63,12 +63,12 @@ export default function CreateTask() {
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.error('请输入任务标题');
+      alert('请输入任务标题');
       return;
     }
 
     if (taskType === 'approval' && formData.reward <= 0) {
-      toast.error('请输入正确的奖励星数');
+      alert('请输入正确的奖励星数');
       return;
     }
 
@@ -77,12 +77,11 @@ export default function CreateTask() {
       const taskData = {
         title: formData.title,
         description: formData.description,
-        reward: taskType === 'approval' ? formData.reward : (taskType === 'direct_reward' ? formData.reward : 0),
-        penalty: taskType === 'direct_penalty' ? formData.penalty : formData.penalty,
+        reward: taskType === 'direct_penalty' ? -formData.penalty :  formData.reward,
         requiresApproval: taskType === 'approval',
         parentId: currentUser?.id,
       };
-
+      console.log(taskData)
       const response = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,15 +89,15 @@ export default function CreateTask() {
       });
 
       if (!response.ok) {
-        toast.error('创建任务失败');
+        alert('创建任务失败');
         setSubmitting(false);
         return;
       }
 
-      toast.success('任务已发布！');
+      alert('任务已发布！');
       router.push('/parent/tasks');
     } catch (error) {
-      toast.error('创建任务出错');
+      alert('创建任务出错');
       setSubmitting(false);
     }
   };
@@ -225,7 +224,6 @@ export default function CreateTask() {
                     name="reward"
                     type="number"
                     min="0"
-                    placeholder="0"
                     value={formData.reward}
                     onChange={handleChange}
                     className="text-lg py-6"
@@ -246,7 +244,6 @@ export default function CreateTask() {
                     name="penalty"
                     type="number"
                     min="0"
-                    placeholder="0"
                     value={formData.penalty}
                     onChange={handleChange}
                     className="text-lg py-6"

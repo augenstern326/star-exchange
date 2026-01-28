@@ -20,7 +20,7 @@ interface Product {
 interface User {
   id: string;
   name: string;
-  totalStars: number;
+  star_balance: number;
 }
 
 export default function Mall() {
@@ -48,30 +48,6 @@ export default function Mall() {
       setProducts(data);
     } catch (error) {
       console.error('Failed to fetch products:', error);
-      // Use mock data for demo
-      setProducts([
-        {
-          id: 'prod1',
-          name: '小玩具车',
-          description: '可爱的玩具小汽车',
-          price: 20,
-          inventory: 5,
-        },
-        {
-          id: 'prod2',
-          name: '漫画书',
-          description: '有趣的漫画故事',
-          price: 15,
-          inventory: 3,
-        },
-        {
-          id: 'prod3',
-          name: '糖果礼盒',
-          description: '各种美味的糖果',
-          price: 10,
-          inventory: 10,
-        },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -79,14 +55,13 @@ export default function Mall() {
 
   const handleExchange = async (product: Product) => {
     if (!currentUser) return;
-
-    if (currentUser.totalStars < product.price) {
-      toast.error('星星不足，无法兑换');
+    if (currentUser.star_balance < product.price) {
+      alert('星星不足，无法兑换');
       return;
     }
 
     if (product.inventory <= 0) {
-      toast.error('商品已售罄');
+      alert('商品已售罄');
       return;
     }
 
@@ -97,26 +72,27 @@ export default function Mall() {
         body: JSON.stringify({
           userId: currentUser.id,
           productId: product.id,
+          price:product.price,
+          productName:product.name,
           quantity: 1,
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        toast.error(error.error || '兑换失败');
+        alert(error.error || '兑换失败');
         return;
       }
 
       // Update user stars
-      const newStars = currentUser.totalStars - product.price;
-      const updatedUser = { ...currentUser, totalStars: newStars };
+      const newStars = currentUser.star_balance - product.price;
+      const updatedUser = { ...currentUser, star_balance: newStars };
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
-
-      toast.success('兑换成功！');
+      alert('兑换成功！');
       fetchProducts();
     } catch (error) {
-      toast.error('兑换出错');
+      alert('兑换出错');
     }
   };
 
@@ -140,7 +116,7 @@ export default function Mall() {
           <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
             <Image src="/star.png" alt="星星" width={24} height={24} />
             <span className="font-bold text-primary text-lg">
-              {currentUser?.totalStars}
+              {currentUser?.star_balance}
             </span>
           </div>
         </div>
@@ -218,13 +194,13 @@ export default function Mall() {
                     onClick={() => handleExchange(product)}
                     disabled={
                       product.inventory <= 0 ||
-                      (currentUser?.totalStars || 0) < product.price
+                      (currentUser?.star_balance || 0) < product.price
                     }
                     className="w-full"
                   >
                     {product.inventory <= 0
                       ? '售罄'
-                      : (currentUser?.totalStars || 0) < product.price
+                      : (currentUser?.star_balance || 0) < product.price
                         ? '星星不足'
                         : '立即兑换'}
                   </Button>

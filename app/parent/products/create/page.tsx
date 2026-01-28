@@ -81,17 +81,17 @@ export default function CreateProduct() {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error('请输入商品名称');
+      alert('请输入商品名称');
       return;
     }
 
     if (formData.price <= 0) {
-      toast.error('请输入正确的价格');
+      alert('请输入正确的价格');
       return;
     }
 
     if (formData.inventory < 0) {
-      toast.error('库存不能为负数');
+      alert('库存不能为负数');
       return;
     }
 
@@ -113,15 +113,15 @@ export default function CreateProduct() {
       });
 
       if (!response.ok) {
-        toast.error('创建商品失败');
+        alert('创建商品失败');
         setSubmitting(false);
         return;
       }
 
-      toast.success('商品已发布！');
+      alert('商品已发布！');
       router.push('/parent/products');
     } catch (error) {
-      toast.error('创建商品出错');
+      alert('创建商品出错');
       setSubmitting(false);
     }
   };

@@ -29,12 +29,39 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, description, reward, penalty,requiresApproval, parentId} = await request.json();
+    const result = await sql`
+      SELECT id, username, email, user_type, parent_id, nickname, avatar_url, star_balance, created_at, updated_at
+      FROM users
+      WHERE user_type = 'child'
+      ORDER BY created_at ASC
+      LIMIT 1
+    `;
+    const user = result[0];
+    const childId = user.id;
+    const { title, description, reward, requiresApproval, parentId} = await request.json();
+    if(requiresApproval==false){
+      await sql`INSERT INTO tasks (parent_id, child_id, title, description,status, reward,requires_approval)
+                          VALUES (${parseInt(parentId)}, ${parseInt(childId)}, ${title}, ${description}, 'approved',${reward}, ${requiresApproval});`;
+      await sql`
+          UPDATE users 
+          SET star_balance = star_balance + ${reward}, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ${childId}
+        `;
 
-    let tasks = await sql`INSERT INTO tasks (parent_id, child_id, title, description, reward,requires_approval)
-                          VALUES (${parseInt(parentId)}, 2, ${title}, ${description}, ${reward}, ${requiresApproval});`;
+      await sql`
+          INSERT INTO star_transactions (child_id, parent_id, transaction_type, amount, reference_type,  description)
+          VALUES (${parseInt(childId)},${parseInt(parentId)}, ${reward>0?'manual_add':'manual_deduct'}, ${reward}, 'task', ${'直接奖励: ' + title})
+        `;
+    }else{
+      await sql`INSERT INTO tasks (parent_id, child_id, title, description, reward,requires_approval)
+                          VALUES (${parseInt(parentId)},${childId}, ${title}, ${description}, ${reward}, ${requiresApproval});`;
+    }
 
-    return NextResponse.json(tasks);
+
+    return NextResponse.json(
+        { ok: '创建任务成功'},
+        { status: 200 }
+    );
   } catch (error) {
     console.error('[v0] Failed to create tasks:', error);
     return NextResponse.json(

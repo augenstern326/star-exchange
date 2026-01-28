@@ -62,7 +62,7 @@ export default function ParentDashboard() {
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">
-              {currentUser.name} 的管理中心
+              家长管理后台
             </h1>
           </div>
           <Button
@@ -119,7 +119,6 @@ export default function ParentDashboard() {
             <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
               <div className="text-5xl">📋</div>
               <h3 className="text-xl font-bold text-foreground">任务管理</h3>
-              <p className="text-sm text-muted-foreground">审批和管理任务</p>
             </Card>
           </Link>
           {/* 商品管理 */}
@@ -127,27 +126,24 @@ export default function ParentDashboard() {
             <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
               <div className="text-5xl">🏪</div>
               <h3 className="text-xl font-bold text-foreground">商品管理</h3>
-              <p className="text-sm text-muted-foreground">管理商品库存</p>
             </Card>
           </Link>
 
-          {/* 孩子中心 */}
-          <Link href="/parent/child-info">
-            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
-              <div className="text-5xl">👧</div>
-              <h3 className="text-xl font-bold text-foreground">孩子中心</h3>
-              <p className="text-sm text-muted-foreground">查看孩子的星星</p>
-            </Card>
-          </Link>
+          {/*/!* 孩子中心 *!/*/}
+          {/*<Link href="/parent/child-info">*/}
+          {/*  <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">*/}
+          {/*    <div className="text-5xl">👧</div>*/}
+          {/*    <h3 className="text-xl font-bold text-foreground">孩子中心</h3>*/}
+          {/*  </Card>*/}
+          {/*</Link>*/}
 
-          {/* 数据统计 */}
-          <Link href="/parent/analytics">
-            <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">
-              <div className="text-5xl">📊</div>
-              <h3 className="text-xl font-bold text-foreground">数据统计</h3>
-              <p className="text-sm text-muted-foreground">查看各项数据</p>
-            </Card>
-          </Link>
+          {/*/!* 数据统计 *!/*/}
+          {/*<Link href="/parent/analytics">*/}
+          {/*  <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">*/}
+          {/*    <div className="text-5xl">📊</div>*/}
+          {/*    <h3 className="text-xl font-bold text-foreground">数据统计</h3>*/}
+          {/*  </Card>*/}
+          {/*</Link>*/}
         </div>
       </div>
     </div>

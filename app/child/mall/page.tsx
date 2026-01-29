@@ -148,10 +148,10 @@ export default function Mall() {
                 {products.map((product) => (
                     <Card
                         key={product.id}
-                        className="bg-white overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
+                        className="bg-white overflow-hidden hover:shadow-lg transition-shadow flex flex-col py-0"
                     >
                       {/* Product Image */}
-                      <div className="bg-secondary/10 h-40 flex items-center justify-center relative overflow-hidden">
+                      <div className="bg-secondary/10 h-60 flex items-center justify-center relative overflow-hidden">
                         {product.image ? (
                             <img
                                 src={product.image || "/placeholder.svg"}

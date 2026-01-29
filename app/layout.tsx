@@ -10,7 +10,6 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: '星星存折',
   description: '星星存折 - 小孩星星兑换、任务完成、积分管理系统',
-  generator: 'v0.app',
   viewport: {
     width: 'device-width',
     initialScale: 1,
@@ -18,21 +17,21 @@ export const metadata: Metadata = {
     userScalable: true,
   },
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    // icon: [
+    //   {
+    //     url: '/icon-light-32x32.png',
+    //     media: '(prefers-color-scheme: light)',
+    //   },
+    //   {
+    //     url: '/icon-dark-32x32.png',
+    //     media: '(prefers-color-scheme: dark)',
+    //   },
+    //   {
+    //     url: '/icon.svg',
+    //     type: 'image/svg+xml',
+    //   },
+    // ],
+    // apple: '/apple-icon.png',
   },
 }
 

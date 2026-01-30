@@ -76,12 +76,12 @@ export default function CreateTask() {
             return;
         }
 
-        if (taskType === 'approval' && formData.reward <= 0) {
+        if (taskType === 'approval' && Number(formData.reward) <= 0) {
             message.error('请输入正确的奖励星数');
             return;
         }
 
-        if (taskType === 'direct_penalty' && formData.penalty <= 0) {
+        if (taskType === 'direct_penalty' && Number(formData.penalty) <= 0) {
             message.error('请输入正确的扣除星数');
             return;
         }

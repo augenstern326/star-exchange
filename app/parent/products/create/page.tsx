@@ -85,12 +85,12 @@ export default function CreateProduct() {
       return;
     }
 
-    if (formData.price <= 0) {
+    if (Number(formData.price) <= 0) {
       message.error('请输入正确的价格');
       return;
     }
 
-    if (formData.inventory < 0) {
+    if (Number(formData.inventory) < 0) {
       message.error('库存不能为负数');
       return;
     }

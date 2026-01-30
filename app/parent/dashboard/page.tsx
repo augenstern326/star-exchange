@@ -89,27 +89,7 @@ export default function ParentDashboard() {
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Quick Stats */}
-        {/*<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">*/}
-        {/*  <Card className="bg-gradient-to-br from-primary to-primary/80 text-white p-6 shadow-lg">*/}
-        {/*    <p className="text-white/90 mb-2">待处理任务</p>*/}
-        {/*    <h2 className="text-4xl font-bold mb-2">0</h2>*/}
-        {/*    <p className="text-sm text-white/80">需要审批</p>*/}
-        {/*  </Card>*/}
-
-        {/*  <Card className="bg-gradient-to-br from-accent to-accent/80 text-foreground p-6 shadow-lg">*/}
-        {/*    <p className="text-muted-foreground mb-2">已发布任务</p>*/}
-        {/*    <h2 className="text-4xl font-bold mb-2">0</h2>*/}
-        {/*    <p className="text-sm text-muted-foreground">总计</p>*/}
-        {/*  </Card>*/}
-
-        {/*  <Card className="bg-gradient-to-br from-secondary to-secondary/80 text-foreground p-6 shadow-lg">*/}
-        {/*    <p className="text-muted-foreground mb-2">商品库存</p>*/}
-        {/*    <h2 className="text-4xl font-bold mb-2">0</h2>*/}
-        {/*    <p className="text-sm text-muted-foreground">件</p>*/}
-        {/*  </Card>*/}
-        {/*</div>*/}
-
+        
         {/* Navigation Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* 任务管理 */}
@@ -126,14 +106,6 @@ export default function ParentDashboard() {
               <h3 className="text-xl font-bold text-foreground">商品管理</h3>
             </Card>
           </Link>
-
-          {/*/!* 孩子中心 *!/*/}
-          {/*<Link href="/parent/child-info">*/}
-          {/*  <Card className="h-32 bg-white hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center gap-3 p-6">*/}
-          {/*    <div className="text-5xl">👧</div>*/}
-          {/*    <h3 className="text-xl font-bold text-foreground">孩子中心</h3>*/}
-          {/*  </Card>*/}
-          {/*</Link>*/}
 
           {/* 数据统计 */}
           <Link href="/parent/analytics">

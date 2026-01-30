@@ -1,9 +1,3 @@
--- Star Book Database Initialization Script
--- Execute this script manually in your Neon PostgreSQL database
--- This script creates all necessary tables and indexes.
--- You will need to manually insert user data using SQL INSERT statements.
-
--- Users table (for both parents and children)
 CREATE TABLE IF NOT EXISTS users (
   id BIGSERIAL PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
@@ -33,8 +27,8 @@ CREATE TABLE IF NOT EXISTS tasks (
   child_id BIGINT,
   title VARCHAR(200) NOT NULL,
   description TEXT,
-  image_url VARCHAR(255),
-  reward_stars INT NOT NULL,
+  image TEXT,
+  reward INT NOT NULL,
   task_type VARCHAR(20) NOT NULL DEFAULT 'normal' CHECK (task_type IN ('normal', 'direct_reward', 'deduct')),
   status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed', 'approved', 'rejected')),
   requires_approval BOOLEAN DEFAULT TRUE,
@@ -58,10 +52,9 @@ CREATE TABLE IF NOT EXISTS products (
   parent_id BIGINT NOT NULL,
   name VARCHAR(200) NOT NULL,
   description TEXT,
-  image_url VARCHAR(255),
-  price_stars INT NOT NULL,
-  stock_quantity INT DEFAULT 0,
-  category VARCHAR(100),
+  image TEXT,
+  price INT NOT NULL,
+  inventory INT DEFAULT 0,
   is_active BOOLEAN DEFAULT TRUE,
   sort_order INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -111,18 +104,3 @@ CREATE INDEX IF NOT EXISTS idx_tasks_child_status ON tasks(child_id, status);
 CREATE INDEX IF NOT EXISTS idx_exchanges_product ON exchanges(product_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_child ON star_transactions(child_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_type ON star_transactions(transaction_type);
-
--- Database initialization complete!
--- 
--- IMPORTANT: You must now create users manually using SQL INSERT statements.
--- 
--- Example 1: Create a parent user
-INSERT INTO users (username, email, password_hash, user_type, nickname, star_balance)
-VALUES ('htt', 'htt@example.com', '3ae3806906f0ed98a6fb7e84a00e89785fa3049457394d2b48a5e62a883c50b06af8f799f1ae154f57b6f6f21534977299488c1c3c3e27b5e7c19f4a3d4ad5ba', 'parent', '胡婷婷', 0);
---
--- Example 2: Create a child user (replace parent_user_id with actual parent ID)
-INSERT INTO users (username, email, password_hash, user_type, parent_id, nickname, star_balance)
-VALUES ('fyq', 'fyq@example.com', '3ae3806906f0ed98a6fb7e84a00e89785fa3049457394d2b48a5e62a883c50b06af8f799f1ae154f57b6f6f21534977299488c1c3c3e27b5e7c19f4a3d4ad5ba', 'child', 1, '方佑琪', 0);
---
--- Password hashing: Use bcrypt to hash passwords before storing them.
--- The application expects bcrypt-hashed passwords in the password_hash field.

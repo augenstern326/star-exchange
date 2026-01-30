@@ -99,8 +99,15 @@ CREATE TABLE IF NOT EXISTS star_transactions (
   FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Additional indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_tasks_child_status ON tasks(child_id, status);
 CREATE INDEX IF NOT EXISTS idx_exchanges_product ON exchanges(product_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_child ON star_transactions(child_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_type ON star_transactions(transaction_type);
+
+
+
+-- 这里是插入初始的用户  密码为123456 password_hash 可以用lib\crypto.ts中的方法生成
+INSERT INTO users (username, email, password_hash, user_type, nickname, star_balance)
+VALUES ('parent', 'parent@example.com', '3ae3806906f0ed98a6fb7e84a00e89785fa3049457394d2b48a5e62a883c50b06af8f799f1ae154f57b6f6f21534977299488c1c3c3e27b5e7c19f4a3d4ad5ba', 'parent', '家长', 0);
+INSERT INTO users (username, email, password_hash, user_type, parent_id, nickname, star_balance)
+VALUES ('child', 'parent@example.com', '3ae3806906f0ed98a6fb7e84a00e89785fa3049457394d2b48a5e62a883c50b06af8f799f1ae154f57b6f6f21534977299488c1c3c3e27b5e7c19f4a3d4ad5ba', 'child', 1, '小朋友', 0);

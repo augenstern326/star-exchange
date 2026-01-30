@@ -3,19 +3,10 @@ import { sql } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const parentId = searchParams.get('parentId');
-    const childId = searchParams.get('childId');
 
-    let tasks;
-    
-    if (parentId) {
-      tasks = await sql`SELECT * FROM tasks WHERE parent_id = ${parseInt(parentId)} ORDER BY created_at DESC`;
-    } else if (childId) {
-      tasks = await sql`SELECT * FROM tasks WHERE child_id = ${parseInt(childId)} ORDER BY created_at DESC`;
-    } else {
-      tasks = await sql`SELECT * FROM tasks ORDER BY created_at DESC`;
-    }
+
+   let tasks = await sql`SELECT * FROM tasks ORDER BY created_at DESC`;
+
 
     return NextResponse.json(tasks);
   } catch (error) {
@@ -38,7 +29,7 @@ export async function POST(request: NextRequest) {
     `;
     const user = result[0];
     const childId = user.id;
-    const { title, description, reward, requiresApproval, parentId} = await request.json();
+    const { title, description, reward, requiresApproval, parentId,deadline_at} = await request.json();
     if(requiresApproval==false){
       await sql`INSERT INTO tasks (parent_id, child_id, title, description,status, reward,requires_approval)
                           VALUES (${parseInt(parentId)}, ${parseInt(childId)}, ${title}, ${description}, 'approved',${reward}, ${requiresApproval});`;
@@ -53,8 +44,8 @@ export async function POST(request: NextRequest) {
           VALUES (${parseInt(childId)},${parseInt(parentId)}, ${reward>0?'manual_add':'manual_deduct'}, ${reward}, 'task', ${'直接奖励: ' + title})
         `;
     }else{
-      await sql`INSERT INTO tasks (parent_id, child_id, title, description, reward,requires_approval)
-                          VALUES (${parseInt(parentId)},${childId}, ${title}, ${description}, ${reward}, ${requiresApproval});`;
+      await sql`INSERT INTO tasks (parent_id, child_id, title, description, reward,requires_approval,deadline_at)
+                          VALUES (${parseInt(parentId)},${childId}, ${title}, ${description}, ${reward}, ${requiresApproval},${deadline_at});`;
     }
 
 

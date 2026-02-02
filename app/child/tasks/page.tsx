@@ -107,6 +107,40 @@ export default function Tasks() {
     }
   };
 
+  // 获取卡片背景颜色类名（儿童友好设计）
+  const getCardBackgroundClass = (status: string, isExpired: boolean) => {
+    if (isExpired) return 'bg-gray-100'; // 已过期 - 浅灰色
+    switch (status) {
+      case 'pending':
+        return 'bg-blue-50'; // 待完成 - 浅蓝色
+      case 'completed':
+        return 'bg-yellow-50'; // 待批准 - 浅黄色
+      case 'approved':
+        return 'bg-green-50'; // 已批准 - 浅绿色
+      case 'rejected':
+        return 'bg-red-50'; // 已拒绝 - 浅红色
+      default:
+        return 'bg-white';
+    }
+  };
+
+  // 获取状态表情符号（儿童友好设计）
+  const getStatusEmoji = (status: string, isExpired: boolean) => {
+    if (isExpired) return '⏰'; // 已过期
+    switch (status) {
+      case 'pending':
+        return '📝'; // 待完成
+      case 'completed':
+        return '⏳'; // 待批准
+      case 'approved':
+        return '✅'; // 已批准
+      case 'rejected':
+        return '❌'; // 已拒绝
+      default:
+        return '📋';
+    }
+  };
+
   // 格式化截止日期显示
   const formatDeadline = (deadlineAt: string) => {
     return format(new Date(deadlineAt), 'yyyy年MM月dd日');
@@ -116,13 +150,13 @@ export default function Tasks() {
   const stats = useMemo(() => {
     const total = tasks.length;
     const pending = tasks.filter(t => t.status === 'pending').length;
-    const completed = tasks.filter(t => t.status === 'completed' || t.status === 'approved').length;
+    const waitingApproval = tasks.filter(t => t.status === 'completed').length; // 待批准
     const approved = tasks.filter(t => t.status === 'approved').length;
     const totalReward = tasks
       .filter(t => t.status === 'approved')
       .reduce((sum, t) => sum + t.reward, 0);
 
-    return { total, pending, completed, approved, totalReward };
+    return { total, pending, waitingApproval, approved, totalReward };
   }, [tasks]);
 
   // 筛选和搜索
@@ -130,7 +164,7 @@ export default function Tasks() {
     return tasks.filter((task) => {
       // 状态筛选
       if (filter === 'pending' && task.status !== 'pending') return false;
-      if (filter === 'completed' && task.status !== 'completed' && task.status !== 'approved') return false;
+      if (filter === 'completed' && task.status !== 'completed') return false;
       if (filter === 'approved' && task.status !== 'approved') return false;
 
       // 搜索关键词
@@ -150,7 +184,8 @@ export default function Tasks() {
   const filterOptions = [
     { value: 'all', label: '全部任务', count: stats.total },
     { value: 'pending', label: '待完成', count: stats.pending },
-    { value: 'completed', label: '已完成', count: stats.completed },
+    { value: 'completed', label: '待批准', count: stats.waitingApproval },
+    { value: 'approved', label: '已批准', count: stats.approved },
   ];
 
   if (authLoading || loading) {
@@ -193,7 +228,7 @@ export default function Tasks() {
         {/* Content */}
         <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
           {/* 统计卡片 */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
             <StatsCard
               title="全部任务"
               value={stats.total}
@@ -202,10 +237,15 @@ export default function Tasks() {
             <StatsCard
               title="待完成"
               value={stats.pending}
+              emoji="📝"
+            />
+            <StatsCard
+              title="待批准"
+              value={stats.waitingApproval}
               emoji="⏳"
             />
             <StatsCard
-              title="已完成"
+              title="已批准"
               value={stats.approved}
               emoji="✅"
             />
@@ -254,12 +294,17 @@ export default function Tasks() {
                   return (
                       <Card
                           key={task.id}
-                          className={`p-4 md:p-6 bg-white hover:shadow-md transition-shadow active:scale-[0.99] ${
+                          className={`p-4 md:p-6 ${getCardBackgroundClass(task.status, isExpired)} hover:shadow-md transition-all active:scale-[0.99] ${
                               isExpired && task.status === 'pending' ? 'opacity-70' : ''
                           }`}
                       >
                         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                           <div className="flex-1">
+                            {/* 大表情符号 - 儿童友好设计 */}
+                            <div className="text-4xl md:text-5xl mb-3">
+                              {getStatusEmoji(task.status, isExpired)}
+                            </div>
+
                             <div className="flex items-start gap-2 mb-2">
                               <h3 className={`text-base md:text-lg font-bold flex-1 ${
                                   isExpired && task.status === 'pending'

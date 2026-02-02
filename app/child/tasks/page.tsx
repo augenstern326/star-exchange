@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,45 +10,26 @@ import { Badge } from '@/components/ui/badge';
 import { message } from 'antd';
 import { format, isBefore, startOfDay } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
-  requiresApproval: boolean;
-  dueDate?: string;
-  createdAt: string;
-  deadline_at: string | null;
-}
-
-interface User {
-  id: string;
-  name: string;
-  totalStars: number;
-}
+import { Task, User, TaskFilter } from '@/types';
+import { useAuth } from '@/hooks/useAuth';
+import { SearchBar } from '@/components/shared/SearchBar';
+import { FilterTabs } from '@/components/shared/FilterTabs';
+import { StatsCard } from '@/components/shared/StatsCard';
+import { TaskListSkeleton } from '@/components/shared/LoadingSkeleton';
 
 export default function Tasks() {
-  const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user, loading: authLoading, updateUser } = useAuth({ requireAuth: true, redirectTo: '/login' });
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
+  const [filter, setFilter] = useState<TaskFilter>('all');
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [loading, setLoading] = useState(true);
-  const today = startOfDay(new Date()); // 获取今天的开始时间（00:00:00）
+  const today = startOfDay(new Date());
 
   useEffect(() => {
-    const userStr = localStorage.getItem('currentUser');
-    if (!userStr) {
-      router.push('/login');
-      return;
+    if (user) {
+      fetchTasks(user.id);
     }
-    const user = JSON.parse(userStr);
-    setCurrentUser(user);
-
-    // Fetch tasks
-    fetchTasks(user.id);
-  }, [router]);
+  }, [user]);
 
   const fetchTasks = async (userId: string) => {
     try {
@@ -84,8 +65,8 @@ export default function Tasks() {
       }
 
       message.success('任务已提交，等待审批！');
-      if (currentUser) {
-        fetchTasks(currentUser.id);
+      if (user) {
+        fetchTasks(user.id);
       }
     } catch (error) {
       message.error('提交出错');
@@ -131,19 +112,64 @@ export default function Tasks() {
     return format(new Date(deadlineAt), 'yyyy年MM月dd日');
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === 'pending') return task.status === 'pending';
-    if (filter === 'completed')
-      return task.status === 'completed' || task.status === 'approved';
-    return true;
-  });
+  // 计算统计数据
+  const stats = useMemo(() => {
+    const total = tasks.length;
+    const pending = tasks.filter(t => t.status === 'pending').length;
+    const completed = tasks.filter(t => t.status === 'completed' || t.status === 'approved').length;
+    const approved = tasks.filter(t => t.status === 'approved').length;
+    const totalReward = tasks
+      .filter(t => t.status === 'approved')
+      .reduce((sum, t) => sum + t.reward, 0);
 
-  if (loading) {
+    return { total, pending, completed, approved, totalReward };
+  }, [tasks]);
+
+  // 筛选和搜索
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      // 状态筛选
+      if (filter === 'pending' && task.status !== 'pending') return false;
+      if (filter === 'completed' && task.status !== 'completed' && task.status !== 'approved') return false;
+      if (filter === 'approved' && task.status !== 'approved') return false;
+
+      // 搜索关键词
+      if (searchKeyword) {
+        const keyword = searchKeyword.toLowerCase();
+        return (
+          task.title.toLowerCase().includes(keyword) ||
+          task.description.toLowerCase().includes(keyword)
+        );
+      }
+
+      return true;
+    });
+  }, [tasks, filter, searchKeyword]);
+
+  // 筛选选项
+  const filterOptions = [
+    { value: 'all', label: '全部任务', count: stats.total },
+    { value: 'pending', label: '待完成', count: stats.pending },
+    { value: 'completed', label: '已完成', count: stats.completed },
+  ];
+
+  if (authLoading || loading) {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary/10 to-secondary/10 flex items-center justify-center">
-          <p className="text-foreground">加载中...</p>
+      <div className="min-h-screen bg-gradient-to-b from-primary/10 to-secondary/10 pb-20">
+        <div className="bg-white shadow-sm sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+          </div>
         </div>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <TaskListSkeleton />
+        </div>
+      </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -155,131 +181,151 @@ export default function Tasks() {
               <span className="text-2xl">←</span>
               <h1 className="text-xl font-bold text-foreground">星星任务</h1>
             </Link>
-            <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-              <Image src="/star.png" alt="星星" width={24} height={24} />
-              <span className="font-bold text-primary text-lg">
-              {currentUser?.totalStars}
-            </span>
+            <div className="flex items-center gap-2 bg-primary/10 px-3 md:px-4 py-1.5 md:py-2 rounded-full">
+              <Image src="/star.png" alt="星星" width={20} height={20} className="md:w-6 md:h-6" />
+              <span className="font-bold text-primary text-base md:text-lg">
+                {user?.totalStars || user?.star_balance || 0}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Filter Tabs */}
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-            {['all', 'pending', 'completed'].map((tab) => (
-                <Button
-                    key={tab}
-                    onClick={() => setFilter(tab as typeof filter)}
-                    variant={filter === tab ? 'default' : 'outline'}
-                    className="whitespace-nowrap"
-                >
-                  {tab === 'all'
-                      ? '全部任务'
-                      : tab === 'pending'
-                          ? '待完成'
-                          : '已完成'}
-                </Button>
-            ))}
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+          {/* 统计卡片 */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
+            <StatsCard
+              title="全部任务"
+              value={stats.total}
+              emoji="📋"
+            />
+            <StatsCard
+              title="待完成"
+              value={stats.pending}
+              emoji="⏳"
+            />
+            <StatsCard
+              title="已完成"
+              value={stats.approved}
+              emoji="✅"
+            />
           </div>
+
+          {/* 搜索栏 */}
+          <SearchBar
+            value={searchKeyword}
+            onChange={setSearchKeyword}
+            placeholder="搜索任务标题或描述..."
+            className="mb-4"
+          />
+
+          {/* Filter Tabs */}
+          <FilterTabs
+            options={filterOptions}
+            value={filter}
+            onChange={(value) => setFilter(value as TaskFilter)}
+            className="mb-6"
+          />
 
           {/* Tasks List */}
           {filteredTasks.length === 0 ? (
-              <Card className="p-12 text-center bg-white">
-                <div className="text-5xl mb-4">✨</div>
-                <p className="text-lg text-foreground font-semibold">
-                  {filter === 'all'
+              <Card className="p-8 md:p-12 text-center bg-white">
+                <div className="text-4xl md:text-5xl mb-4">
+                  {searchKeyword ? '🔍' : '✨'}
+                </div>
+                <p className="text-base md:text-lg text-foreground font-semibold">
+                  {searchKeyword
+                      ? '没有找到匹配的任务'
+                      : filter === 'all'
                       ? '暂无任务'
                       : filter === 'pending'
-                          ? '没有待完成的任务'
-                          : '还没有完成任何任务'}
+                      ? '没有待完成的任务'
+                      : '还没有完成任何任务'}
                 </p>
-                <p className="text-muted-foreground mt-2">
-                  完成家长发布的任务就能赚取星星哦！
+                <p className="text-sm md:text-base text-muted-foreground mt-2">
+                  {searchKeyword ? '试试其他关键词' : '完成家长发布的任务就能赚取星星哦！'}
                 </p>
               </Card>
           ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {filteredTasks.map((task) => {
                   const isExpired = isTaskExpired(task.deadline_at);
 
                   return (
                       <Card
                           key={task.id}
-                          className={`p-6 bg-white hover:shadow-md transition-shadow ${
+                          className={`p-4 md:p-6 bg-white hover:shadow-md transition-shadow active:scale-[0.99] ${
                               isExpired && task.status === 'pending' ? 'opacity-70' : ''
                           }`}
                       >
-                        <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                           <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className={`text-lg font-bold ${
+                            <div className="flex items-start gap-2 mb-2">
+                              <h3 className={`text-base md:text-lg font-bold flex-1 ${
                                   isExpired && task.status === 'pending'
                                       ? 'text-muted-foreground'
                                       : 'text-foreground'
                               }`}>
                                 {task.title}
                               </h3>
-                              <Badge variant={getStatusColor(task.status, isExpired)}>
+                              <Badge variant={getStatusColor(task.status, isExpired)} className="flex-shrink-0">
                                 {getStatusLabel(task.status, isExpired)}
                               </Badge>
                             </div>
-                            <p className={`text-muted-foreground mb-4
-                            }`}>
+                            <p className="text-sm text-muted-foreground mb-3">
                               {task.description}
                             </p>
-                            <div className="flex items-center gap-4 mb-4">
-                              <div className="flex items-center gap-2">
-                                <Image
-                                    src="/star.png"
-                                    alt="星星"
-                                    width={20}
-                                    height={20}
-                                />
-                                <span className="font-semibold text-primary">
-                            {task.reward >= 0 ? '+' + task.reward : task.reward}星星
-                          </span>
-                              </div>
+                            <div className="flex items-center gap-2 mb-3">
+                              <Image
+                                  src="/star.png"
+                                  alt="星星"
+                                  width={18}
+                                  height={18}
+                                  className="md:w-5 md:h-5"
+                              />
+                              <span className={`font-semibold text-sm md:text-base ${
+                                task.reward >= 0 ? 'text-primary' : 'text-destructive'
+                              }`}>
+                                {task.reward >= 0 ? '+' : ''}{task.reward} 星星
+                              </span>
                             </div>
 
-                            {/* 截止日期显示 - 只在有截止日期时显示 */}
                             {task.deadline_at && (
-                                <div className="flex items-center gap-2 text-sm">
-                                  <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                                  <span className="text-muted-foreground">截止日期：</span>
+                                <div className="flex items-center gap-2 text-xs md:text-sm">
+                                  <CalendarIcon className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground flex-shrink-0" />
+                                  <span className="text-muted-foreground">截止：</span>
                                   <span className={
                                     isExpired
                                         ? 'text-destructive font-medium'
                                         : 'text-foreground font-medium'
                                   }>
-                            {formatDeadline(task.deadline_at)}
-                          </span>
+                                    {formatDeadline(task.deadline_at)}
+                                  </span>
                                 </div>
                             )}
                           </div>
 
                           {/* Action Button */}
-                          <div className="flex flex-col items-end gap-2">
+                          <div className="flex md:flex-col items-center md:items-end gap-2">
                             {task.status === 'pending' && !isExpired && (
                                 <Button
                                     onClick={() => handleCompleteTask(task.id)}
                                     size="sm"
-                                    className="whitespace-nowrap"
+                                    className="w-full md:w-auto whitespace-nowrap"
                                 >
-                                  完成任务
+                                  ✓ 完成任务
                                 </Button>
                             )}
                             {task.status === 'approved' && (
-                                <div className="flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
-                                  <span className="text-2xl">✓</span>
-                                  <span className="text-sm font-semibold text-green-700">
-                            已获得
-                          </span>
+                                <div className="flex items-center gap-1.5 bg-green-100 px-3 py-1.5 rounded-full">
+                                  <span className="text-lg md:text-xl">✓</span>
+                                  <span className="text-xs md:text-sm font-semibold text-green-700">
+                                    已获得
+                                  </span>
                                 </div>
                             )}
                             {isExpired && task.status === 'pending' && (
-                                <div className="text-sm text-destructive font-medium">
+                                <div className="text-xs md:text-sm text-destructive font-medium">
                                   任务已过期
                                 </div>
                             )}
